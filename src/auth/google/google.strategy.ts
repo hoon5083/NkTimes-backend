@@ -36,10 +36,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
         throw new BadRequestException("No payload in JWT");
       }
 
-      if (payload.hd !== "g.skku.edu") {
-        throw new UnauthorizedException("Invalid Email Domain");
-      }
-
       return { email: payload.email };
     } catch (error) {
       if (error instanceof SyntaxError) {
