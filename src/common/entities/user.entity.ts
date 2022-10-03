@@ -30,7 +30,7 @@ export class User {
   studentId: number;
 
   @Column()
-  phone: number;
+  phone: string;
 
   @Column()
   name: string;

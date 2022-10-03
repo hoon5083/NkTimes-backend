@@ -1,12 +1,4 @@
-import {
-  IsEnum,
-  IsInt,
-  isNotEmpty,
-  IsNotEmpty,
-  IsOptional,
-  IsPositive,
-  IsString,
-} from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString } from "class-validator";
 import { UserEnum } from "src/common/enums/user.enum";
 
 export class CreateUserDto {
@@ -34,11 +26,12 @@ export class CreateUserDto {
   studentId: number;
 
   @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
-  phone: number;
+  @IsString()
+  phone: string;
 
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  email: string;
 }

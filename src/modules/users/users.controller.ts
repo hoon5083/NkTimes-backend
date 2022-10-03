@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -10,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { CreateUserDto } from "./dtos/create-user.dto";
 import { UsersService } from "./users.service";
 
 @Controller("users")
@@ -23,8 +25,8 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@CurrentUser() currentUser) {
-    return await this.usersService.createUser(currentUser);
+  async createUser(@CurrentUser() currentUser, @Body() createUserDto: CreateUserDto) {
+    return await this.usersService.createUser(currentUser, createUserDto);
   }
 
   @Get("me")
