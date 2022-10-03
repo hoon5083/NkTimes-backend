@@ -7,6 +7,7 @@ import { CommentsModule } from "./modules/comments/comments.module";
 import { TalkingsModule } from "./modules/talkings/talkings.module";
 import { FilesModule } from "./modules/files/files.module";
 import { PopupsModule } from "./modules/popups/popups.module";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PopupsModule } from "./modules/popups/popups.module";
     TalkingsModule,
     FilesModule,
     PopupsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

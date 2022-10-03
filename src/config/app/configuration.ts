@@ -10,4 +10,7 @@ export default () => ({
     password: process.env.DB_PASSWORD,
     name: process.env.DB_NAME,
   },
+  google: {
+    clientID: process.env.GOOGLE_CLIENT_ID,
+  },
 });
