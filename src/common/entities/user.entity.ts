@@ -21,7 +21,7 @@ export class User {
   email: string;
 
   @Column({ nullable: true })
-  grade: 1 | 2 | 3;
+  grade: number;
 
   @Column({ nullable: true })
   class: number;
