@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 @Injectable()
 export class MysqlConfigService {
@@ -14,9 +15,10 @@ export class MysqlConfigService {
       username: this.configService.get("database.username"),
       password: this.configService.get("database.password"),
       database: this.configService.get("database.name"),
-      autoLoadEntities: this.configService.get("app.env") === "development",
-      synchronize: this.configService.get("app.env") === "development",
-      logging: true,
+      entities: ["dist/**/*.entity{.ts,.js}"],
+      synchronize: this.configService.get("app.env") !== "production",
+      logging: this.configService.get("app.env") !== "production",
+      namingStrategy: new SnakeNamingStrategy(),
     };
   }
 }
