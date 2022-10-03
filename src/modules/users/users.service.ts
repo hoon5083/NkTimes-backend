@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
@@ -17,7 +17,11 @@ export class UsersService {
         where: { email: currentUser.email },
       });
       if (existingUser) {
-        throw new BadRequestException("Already registered user");
+        if (!existingUser.isApproved) {
+          throw new BadRequestException("Register Pending");
+        } else {
+          throw new BadRequestException("Already registered user");
+        }
       }
       if (
         createUserDto.authority !== UserEnum.GRADUATE &&
@@ -37,7 +41,18 @@ export class UsersService {
   }
 
   async getMe(currentUser) {
-    return { currentUser, api: "getme" };
+    return await this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { email: currentUser.email },
+      });
+      if (!user) {
+        throw new NotFoundException("There is no user with that email");
+      }
+      if (!user.isApproved) {
+        throw new BadRequestException("Register Pending");
+      }
+      return user;
+    });
   }
 
   async updateMe(currentUser) {

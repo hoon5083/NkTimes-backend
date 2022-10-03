@@ -35,6 +35,9 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  isApproved: boolean;
+
   @OneToMany(() => Article, (article) => article.author)
   articles: Article[];
 

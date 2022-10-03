@@ -12,6 +12,7 @@ import {
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { CreateUserDto } from "./dtos/create-user.dto";
+import { UserDto } from "./dtos/user.dto";
 import { UsersService } from "./users.service";
 
 @Controller("users")
@@ -31,7 +32,8 @@ export class UsersController {
 
   @Get("me")
   async getMe(@CurrentUser() currentUser) {
-    return await this.usersService.getMe(currentUser);
+    const user = await this.usersService.getMe(currentUser);
+    return new UserDto(user);
   }
 
   @Patch("me")
