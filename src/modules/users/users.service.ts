@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
@@ -7,8 +12,18 @@ import { CreateUserDto } from "./dtos/create-user.dto";
 @Injectable()
 export class UsersService {
   constructor(private readonly dataSource: DataSource) {}
-  async getUsers(currentUser) {
-    return { currentUser, api: "getusers" };
+  async getUsers(currentUser, isPending: boolean) {
+    return await this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (user.authority !== UserEnum.ADMIN) {
+        throw new ForbiddenException("Only admin can access users list");
+      }
+      const queryBuilder = manager.createQueryBuilder(User, "user"); //order by 추가 필요, 동시에 엔티티 수정 필요
+      if (isPending) {
+        queryBuilder.where("user.is_approved = false");
+      }
+      return queryBuilder.getManyAndCount();
+    });
   }
 
   async createUser(currentUser, createUserDto: CreateUserDto) {
@@ -18,7 +33,7 @@ export class UsersService {
       });
       if (existingUser) {
         if (!existingUser.isApproved) {
-          throw new BadRequestException("Register Pending");
+          throw new BadRequestException("Register is pending");
         } else {
           throw new BadRequestException("Already registered user");
         }

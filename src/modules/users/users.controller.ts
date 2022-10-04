@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
@@ -16,13 +17,14 @@ import { UserDto } from "./dtos/user.dto";
 import { UsersService } from "./users.service";
 
 @Controller("users")
-@UseGuards(GoogleAuthGuard({ strict: false })) // true
+@UseGuards(GoogleAuthGuard({ strict: true }))
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async getUsers(@CurrentUser() currentUser) {
-    return await this.usersService.getUsers(currentUser);
+  async getUsers(@CurrentUser() currentUser, @Query() isPending: boolean) {
+    const [users, count] = await this.usersService.getUsers(currentUser, isPending);
+    return users;
   }
 
   @Post()
