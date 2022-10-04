@@ -8,18 +8,34 @@ import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
 import { CreateUserDto } from "./dtos/create-user.dto";
+import { UserPageQuery } from "./dtos/user-page-query.dto";
 
+function valueToBoolean(value: any) {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (["true", "on", "yes", "1"].includes(value.toLowerCase())) {
+    return true;
+  }
+  if (["false", "off", "no", "0"].includes(value.toLowerCase())) {
+    return false;
+  }
+  return value;
+}
 @Injectable()
 export class UsersService {
   constructor(private readonly dataSource: DataSource) {}
-  async getUsers(currentUser, isPending: boolean) {
+  async getUsers(currentUser, userPageQuery: UserPageQuery) {
     return await this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("Only admin can access users list");
       }
       const queryBuilder = manager.createQueryBuilder(User, "user"); //order by 추가 필요, 동시에 엔티티 수정 필요
-      if (isPending) {
+      if (valueToBoolean(userPageQuery.isPending)) {
         queryBuilder.where("user.is_approved = false");
       }
       return queryBuilder.getManyAndCount();

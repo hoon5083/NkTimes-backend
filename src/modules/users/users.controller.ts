@@ -13,6 +13,8 @@ import {
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { CreateUserDto } from "./dtos/create-user.dto";
+import { UserPageQuery } from "./dtos/user-page-query.dto";
+import { UserPageDto } from "./dtos/user-page.dto";
 import { UserDto } from "./dtos/user.dto";
 import { UsersService } from "./users.service";
 
@@ -22,8 +24,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async getUsers(@CurrentUser() currentUser, @Query() isPending: boolean) {
-    const [users, count] = await this.usersService.getUsers(currentUser, isPending);
+  async getUsers(@CurrentUser() currentUser, @Query() userPageQuery: UserPageQuery) {
+    const [users, count] = await this.usersService.getUsers(currentUser, userPageQuery);
+    return new UserPageDto(count, userPageQuery.getLimit(), userPageQuery.pageNumber, users);
     return users;
   }
 
