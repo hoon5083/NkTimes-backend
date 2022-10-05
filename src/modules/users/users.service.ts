@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
@@ -28,6 +29,7 @@ function valueToBoolean(value: any) {
 @Injectable()
 export class UsersService {
   constructor(private readonly dataSource: DataSource) {}
+
   async getUsers(currentUser, userPageQuery: UserPageQuery) {
     return await this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
@@ -43,6 +45,8 @@ export class UsersService {
   }
 
   async createUser(currentUser, createUserDto: CreateUserDto) {
+    //닉네임 중복 체크
+    //번호 중복 체크, 전화번호 중복 체크
     return await this.dataSource.transaction(async (manager) => {
       const existingUser = await manager.findOne(User, {
         where: { email: currentUser.email },
@@ -98,7 +102,19 @@ export class UsersService {
     return { currentUser, id, api: "deleteUser" };
   }
 
-  async updateUser(id: number, currentUser) {
-    return { currentUser, id, api: "updateUser" };
+  async updateUser(id: number, currentUser, updateUserDetailDto) {
+    return await this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
+      }
+      if (user.authority !== UserEnum.ADMIN) {
+        throw new ForbiddenException("Only Admin users can update users");
+      }
+      return await manager.update(User, id, updateUserDetailDto);
+    });
   }
 }
