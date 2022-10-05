@@ -53,7 +53,7 @@ export class UsersController {
 
   @Delete(":id")
   async deleteUser(@Param("id", ParseIntPipe) id: number, @CurrentUser() currentUser) {
-    return await this.usersService.deleteUser(id, currentUser);
+    return await this.usersService.deleteUser(id, currentUser); // 응답 수정 필요
   }
 
   @Patch(":id")
