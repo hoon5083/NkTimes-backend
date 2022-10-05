@@ -47,8 +47,8 @@ export class UsersController {
   }
 
   @Delete("me")
-  async deleteMe(currentUser) {
-    return await this.usersService.deleteMe(currentUser);
+  async deleteMe(@CurrentUser() currentUser) {
+    return await this.usersService.deleteMe(currentUser); // 응답 수정 필요할 수도
   }
 
   @Delete(":id")

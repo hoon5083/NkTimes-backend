@@ -95,7 +95,20 @@ export class UsersService {
   }
 
   async deleteMe(currentUser) {
-    return { currentUser, api: "deleteme" };
+    return await this.dataSource.transaction(async (manager) => {
+      console.log(currentUser);
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
+      }
+      if (user.authority === UserEnum.ADMIN) {
+        throw new BadRequestException("Cannot delete admin yourself");
+      }
+      return await manager.delete(User, user.id);
+    });
   }
 
   async deleteUser(id: number, currentUser) {
@@ -111,7 +124,7 @@ export class UsersService {
         throw new ForbiddenException("Only Admin users can delete users");
       }
       if (user.id === id) {
-        throw new BadRequestException("Cannot delete yourself");
+        throw new BadRequestException("Cannot delete admin yourself");
       }
       return await manager.delete(User, id);
     });
