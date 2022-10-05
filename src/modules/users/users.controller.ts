@@ -13,7 +13,7 @@ import {
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { CreateUserDto } from "./dtos/create-user.dto";
-import { UpdateUserDetailDto } from "./dtos/update-user.dto";
+import { UpdateUserDetailDto, UpdateUserDto } from "./dtos/update-user.dto";
 import { UserPageQuery } from "./dtos/user-page-query.dto";
 import { UserPageDto } from "./dtos/user-page.dto";
 import { UserDto } from "./dtos/user.dto";
@@ -42,8 +42,8 @@ export class UsersController {
   }
 
   @Patch("me")
-  async updateMe(@CurrentUser() currentUser) {
-    return await this.usersService.updateMe(currentUser);
+  async updateMe(@CurrentUser() currentUser, updateUserDto: UpdateUserDto) {
+    return await this.usersService.updateMe(currentUser, updateUserDto);
   }
 
   @Delete("me")

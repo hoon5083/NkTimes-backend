@@ -90,8 +90,17 @@ export class UsersService {
     });
   }
 
-  async updateMe(currentUser) {
-    return { currentUser, api: "updateme" };
+  async updateMe(currentUser, updateUserDto) {
+    return await this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
+      }
+      return await manager.update(User, user.id, updateUserDto);
+    });
   }
 
   async deleteMe(currentUser) {

@@ -29,6 +29,7 @@ export class UpdateUserDto {
   @IsString()
   name: string;
 }
+
 export class UpdateUserDetailDto extends UpdateUserDto {
   @IsOptional()
   @IsEnum(UserEnum)
