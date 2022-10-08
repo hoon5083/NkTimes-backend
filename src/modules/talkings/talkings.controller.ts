@@ -1,16 +1,17 @@
-import { Controller, Delete, Get, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, UseGuards } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { CreateTalkingDto } from "./dtos/create-talkings.dto";
 import { TalkingsService } from "./talkings.service";
 
 @Controller("talkings")
-//@UseGuards(GoogleAuthGuard({ strict: true }))
+@UseGuards(GoogleAuthGuard({ strict: true }))
 export class TalkingsController {
   constructor(private readonly talkingsService: TalkingsService) {}
 
   @Post()
-  async createTalkings() {
-    return this.talkingsService.createTalkings();
+  async createTalking(@CurrentUser() currentUser, @Body() createTalkingDto: CreateTalkingDto) {
+    return this.talkingsService.createTalking(currentUser, createTalkingDto);
   }
 
   @Get()
