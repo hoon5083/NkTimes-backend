@@ -9,8 +9,8 @@ export class UserPageDto extends PageDto<UserDetailDto> {
       totalCount,
       pageSize,
       pageNumber,
-      users.map((recruitment) => {
-        return new UserDetailDto(recruitment);
+      users.map((user) => {
+        return new UserDetailDto(user);
       })
     );
     this.metadata = new MetaData();
