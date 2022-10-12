@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { Talking } from "src/common/entities/talking.entity";
 import { User } from "src/common/entities/user.entity";
+import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
 import { CreateTalkingDto } from "./dtos/create-talkings.dto";
 import { TalkingPageQuery } from "./dtos/talking-page-query.dto";
@@ -32,13 +33,32 @@ export class TalkingsService {
     });
   }
 
-  async updateTalking(currentuser, id: number, updateTalkingDto: UpdateTalkingDto) {
+  async updateTalking(currentUser, id: number, updateTalkingDto: UpdateTalkingDto) {
     return await this.dataSource.transaction(async (manager) => {
+      const talking = await manager.findOne(Talking, {
+        where: { id },
+        relations: { author: true },
+      });
+      if (talking.author.email !== currentUser.email) {
+        throw new ForbiddenException("You are not an author");
+      }
       return await manager.update(Talking, id, updateTalkingDto);
     });
   }
 
-  async deleteTalking(id: number) {
-    return "deleteTalking";
+  async deleteTalking(currentUser, id: number) {
+    return await this.dataSource.transaction(async (manager) => {
+      const talking = await manager.findOne(Talking, {
+        where: { id: id },
+        relations: { author: true },
+      });
+      if (
+        talking.author.email !== currentUser.email &&
+        talking.author.authority !== UserEnum.ADMIN
+      ) {
+        throw new ForbiddenException("You are not an author or admin");
+      }
+      return await manager.delete(Talking, id);
+    });
   }
 }
