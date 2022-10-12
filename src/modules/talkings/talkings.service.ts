@@ -3,6 +3,8 @@ import { Talking } from "src/common/entities/talking.entity";
 import { User } from "src/common/entities/user.entity";
 import { DataSource } from "typeorm";
 import { CreateTalkingDto } from "./dtos/create-talkings.dto";
+import { TalkingPageQuery } from "./dtos/talking-page-query.dto";
+import { UpdateTalkingDto } from "./dtos/update-talking.dto";
 
 @Injectable()
 export class TalkingsService {
@@ -19,15 +21,24 @@ export class TalkingsService {
     });
   }
 
-  async getTalkings() {
-    return "getTalkings";
+  async getTalkings(talkingPageQuery: TalkingPageQuery) {
+    return await this.dataSource.transaction(async (manager) => {
+      return await manager.findAndCount(Talking, {
+        order: { createdAt: "DESC" },
+        relations: { author: true },
+        take: talkingPageQuery.getLimit(),
+        skip: talkingPageQuery.getOffset(),
+      });
+    });
   }
 
-  async updateTalking() {
-    return "updateTalking";
+  async updateTalking(currentuser, id: number, updateTalkingDto: UpdateTalkingDto) {
+    return await this.dataSource.transaction(async (manager) => {
+      return await manager.update(Talking, id, updateTalkingDto);
+    });
   }
 
-  async deleteTalking() {
+  async deleteTalking(id: number) {
     return "deleteTalking";
   }
 }
