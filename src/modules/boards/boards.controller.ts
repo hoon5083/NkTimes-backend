@@ -13,6 +13,7 @@ import {
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { BoardsService } from "./boards.service";
+import { BoardPageDto } from "./dtos/board-page.dto";
 import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
@@ -29,7 +30,8 @@ export class BoardsController {
   @Get()
   @UseGuards(GoogleAuthGuard({ strict: false }))
   async getBoards(@CurrentUser() currentUser, @Query() boardPageQuery) {
-    return await this.boardsService.getBoards(currentUser, boardPageQuery);
+    const [boards, count] = await this.boardsService.getBoards(currentUser, boardPageQuery);
+    return new BoardPageDto(count, boardPageQuery.getLimit, boardPageQuery.pageNumber, boards);
   }
 
   @Get(":id")

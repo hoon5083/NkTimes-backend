@@ -4,6 +4,21 @@ import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
 
+function valueToBoolean(value: any) {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (["true", "on", "yes", "1"].includes(value.toLowerCase())) {
+    return true;
+  }
+  if (["false", "off", "no", "0"].includes(value.toLowerCase())) {
+    return false;
+  }
+  return value;
+}
 @Injectable()
 export class BoardsService {
   constructor(private readonly dataSource: DataSource) {}
@@ -24,7 +39,19 @@ export class BoardsService {
   }
 
   async getBoards(currentUser, getBoardsQuery) {
-    return "getBoards";
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (valueToBoolean(getBoardsQuery.viewAll) === true && user.authority !== UserEnum.ADMIN) {
+        throw new ForbiddenException("Only admin can get not approved boards");
+      }
+      const queryBuilder = manager
+        .createQueryBuilder(Board, "board")
+        .leftJoinAndSelect("board.applicant", "applicant");
+      if (!valueToBoolean(getBoardsQuery.viewAll)) {
+        queryBuilder.where("board.is_approved = true");
+      }
+      return await queryBuilder.getManyAndCount();
+    });
   }
 
   async getBoard(currentUser, id) {

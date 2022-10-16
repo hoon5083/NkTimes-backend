@@ -5,4 +5,5 @@ export class BoardPageQuery extends PageQuery {
   @IsOptional()
   @IsString()
   isApproved: string;
+  viewAll: string;
 }
