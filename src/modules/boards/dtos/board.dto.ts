@@ -3,11 +3,12 @@ import { Board } from "src/common/entities/board.entity";
 
 export class BoardDto {
   constructor(board: Board) {
+    this.id = board.id;
     this.title = board.title;
     this.isApproved = board.isApproved;
     this.introduction = board.introduction;
   }
-
+  id: number;
   title: string;
   isApproved: boolean;
   introduction: string;
