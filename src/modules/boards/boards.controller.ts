@@ -15,6 +15,7 @@ import { CurrentUser } from "src/common/decorators/user.decorator";
 import { BoardsService } from "./boards.service";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
 import { BoardPageDto } from "./dtos/board-page.dto";
+import { BoardDto } from "./dtos/board.dto";
 import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
@@ -38,7 +39,8 @@ export class BoardsController {
   @Get(":id")
   @UseGuards(GoogleAuthGuard({ strict: false }))
   async getBoard(@CurrentUser() currentUser, @Param("id", ParseIntPipe) id: number) {
-    return await this.boardsService.getBoard(currentUser, id);
+    const board = await this.boardsService.getBoard(currentUser, id);
+    return new BoardDto(board);
   }
 
   @Patch(":id")

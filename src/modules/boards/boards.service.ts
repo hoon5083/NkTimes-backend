@@ -1,4 +1,10 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { Board } from "src/common/entities/board.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
@@ -55,7 +61,19 @@ export class BoardsService {
   }
 
   async getBoard(currentUser, id) {
-    return "getBoard";
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException();
+      } else if (user.authority === UserEnum.PENDING) {
+        throw new ForbiddenException();
+      }
+      const board = await manager.findOne(Board, { where: { id: id } });
+      if (!board.isApproved) {
+        throw new BadRequestException();
+      }
+      return board;
+    });
   }
 
   async updateBoard(currentUser, id, updateBoardDto) {
