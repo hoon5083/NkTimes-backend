@@ -9,6 +9,7 @@ import { Board } from "src/common/entities/board.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
+import { UpdateBoardDto } from "./dtos/update-board.dto";
 
 function valueToBoolean(value: any) {
   if (value === null || value === undefined) {
@@ -76,8 +77,23 @@ export class BoardsService {
     });
   }
 
-  async updateBoard(currentUser, id, updateBoardDto) {
-    return "updateBoard";
+  async updateBoard(currentUser, id, updateBoardDto: UpdateBoardDto) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      const board = await manager.findOne(Board, {
+        where: { id: id },
+        relations: { applicant: true },
+      });
+      if (updateBoardDto.isApproved !== undefined && user.authority !== UserEnum.ADMIN) {
+        throw new ForbiddenException();
+      } else if (board.applicant.id !== user.id) {
+        throw new ForbiddenException();
+      }
+      return await manager.update(Board, id, updateBoardDto);
+    });
   }
 
   async deleteBoard(currentUser, id) {
