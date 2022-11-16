@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
+import { info } from "console";
 import { Board } from "src/common/entities/board.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
@@ -70,7 +71,9 @@ export class BoardsService {
         throw new ForbiddenException();
       }
       const board = await manager.findOne(Board, { where: { id: id } });
-      if (!board.isApproved) {
+      if (!board) {
+        throw new NotFoundException();
+      } else if (!board.isApproved) {
         throw new BadRequestException();
       }
       return board;
