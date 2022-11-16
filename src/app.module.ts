@@ -20,6 +20,7 @@ import { AuthModule } from "./auth/auth.module";
     FilesModule,
     PopupsModule,
     AuthModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],
