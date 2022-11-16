@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
 import { File } from "./file.entity";
 
 @Entity()
@@ -7,5 +7,6 @@ export class Popup {
   id: number;
 
   @OneToOne(() => File, (file) => file.popup)
+  @JoinColumn()
   file: File;
 }
