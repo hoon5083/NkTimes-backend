@@ -10,14 +10,10 @@ import {
   StreamableFile,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { FileDto } from "./dtos/response-file.dto";
 import { FilesService } from "./files.service";
 import { ParseFilePipe } from "./pipes/parse-file.pipe";
 
-@Controller({
-  version: "1",
-  path: "files",
-})
+@Controller("files")
 @UseGuards(GoogleAuthGuard({ strict: true }))
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
@@ -30,6 +26,7 @@ export class FilesController {
 
   @Get(":key")
   async getFile(@Param("key") key: string) {
-    return "getFile";
+    const { file, stream } = await this.filesService.getFile(key);
+    return new StreamableFile(stream, { type: file.type });
   }
 }

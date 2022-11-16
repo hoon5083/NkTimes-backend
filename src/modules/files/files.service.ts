@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { File } from "../../common/entities/file.entity";
 import { FileClientService } from "src/config/file/client.service";
 import { FILE_CLIENT_SERVICE } from "src/common/constants";
@@ -33,10 +33,14 @@ export class FilesService {
   }
 
   async getFile(key: string) {
-    return "getFile";
-  }
+    const file = await this.dataSource.manager.findOne(File, {
+      where: { key: key },
+    });
+    if (!file) {
+      throw new NotFoundException();
+    }
+    const stream = await this.fileClientService.getFile(key);
 
-  async deleteFile(key: string) {
-    return "deleteFile";
+    return { file, stream };
   }
 }
