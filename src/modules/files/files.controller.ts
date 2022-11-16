@@ -25,7 +25,7 @@ export class FilesController {
   @Post()
   @UseInterceptors(FileInterceptor("file"))
   async uploadFile(@UploadedFile(ParseFilePipe) uploadedFile: Express.Multer.File) {
-    return "uploadFile";
+    return this.filesService.uploadFile(uploadedFile);
   }
 
   @Get(":key")
