@@ -27,15 +27,23 @@ export class PopupsService {
       if (!photo) {
         throw new NotFoundException();
       }
-      const partialPopup = { file: null };
-      partialPopup.file = photo;
-      const popup = await manager.create(Popup, partialPopup);
+      const currentPopup = await manager.find(Popup);
+      if (currentPopup[0]) {
+        await manager.delete(Popup, currentPopup[0].id);
+      }
+      const popup = await manager.create(Popup, { file: photo });
       await manager.save(popup);
       return popup;
     });
   }
 
   async getPopup() {
-    return "getPopup";
+    return this.dataSource.transaction(async (manager) => {
+      const popups = await manager.find(Popup, { relations: { file: true } });
+      if (!popups[0]) {
+        throw new NotFoundException();
+      }
+      return popups[0];
+    });
   }
 }

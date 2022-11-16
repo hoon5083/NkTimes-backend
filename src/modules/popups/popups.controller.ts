@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { CreatePopupDto } from "./dtos/create-popup.dto";
+import { PopupDto } from "./dtos/popup.dto";
 import { PopupsService } from "./popups.service";
 
 @Controller("popups")
@@ -16,6 +17,6 @@ export class PopupsController {
 
   @Get()
   async getPopup() {
-    return this.popupsService.getPopup();
+    return new PopupDto(await this.popupsService.getPopup());
   }
 }
