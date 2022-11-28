@@ -1,5 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
-import { ucs2 } from "punycode";
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { Article } from "src/common/entities/article.entity";
 import { Board } from "src/common/entities/board.entity";
 import { User } from "src/common/entities/user.entity";
@@ -38,8 +42,27 @@ export class ArticlesService {
     return "getArticles";
   }
 
-  async getArticle() {
-    return "getArticle";
+  async getArticle(currentUser, id: number, boardId: number) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { email: currentUser.email },
+      });
+      if (user.authority === UserEnum.PENDING) {
+        throw new ForbiddenException("Pending User");
+      }
+      const article = await manager.findOne(Article, {
+        where: { id },
+        relations: { author: true, files: true, board: true },
+      });
+      if (!article) {
+        throw new NotFoundException("there is no article with the id");
+      }
+      if (article.board.id !== boardId) {
+        throw new BadRequestException("The article is not in the board");
+      }
+
+      return article;
+    });
   }
 
   async updateArticle() {

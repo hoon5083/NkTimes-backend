@@ -12,6 +12,7 @@ import {
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { ArticlesService } from "./articles.service";
+import { ArticleDetailDto } from "./dtos/article.dto";
 import { CreateArticleDto } from "./dtos/create-article.dto";
 
 @Controller("articles")
@@ -36,8 +37,12 @@ export class ArticlesController {
 
   @Get(":boardId/:id")
   @UseGuards(GoogleAuthGuard({ strict: true }))
-  async getArticle() {
-    return await this.articlesService.getArticle();
+  async getArticle(
+    @CurrentUser() currentUser,
+    @Param("id", ParseIntPipe) id: number,
+    @Param("boardId", ParseIntPipe) boardId: number
+  ) {
+    return new ArticleDetailDto(await this.articlesService.getArticle(currentUser, id, boardId));
   }
 
   @Patch(":boardId/:id")
