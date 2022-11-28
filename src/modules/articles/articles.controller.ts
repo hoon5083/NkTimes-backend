@@ -1,6 +1,18 @@
-import { Controller, Delete, Get, Patch, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
+import { CurrentUser } from "src/common/decorators/user.decorator";
 import { ArticlesService } from "./articles.service";
+import { CreateArticleDto } from "./dtos/create-article.dto";
 
 @Controller("articles")
 export class ArticlesController {
@@ -8,8 +20,12 @@ export class ArticlesController {
 
   @Post(":boardId")
   @UseGuards(GoogleAuthGuard({ strict: true }))
-  async createArticle() {
-    return await this.articlesService.createArticle();
+  async createArticle(
+    @CurrentUser() currentUser,
+    @Param("boardId", ParseIntPipe) boardId: number,
+    @Body() createArticleDto: CreateArticleDto
+  ) {
+    return await this.articlesService.createArticle(currentUser, boardId, createArticleDto);
   }
 
   @Get(":boardId")

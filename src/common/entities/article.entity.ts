@@ -47,4 +47,6 @@ export class Article {
 
   @OneToMany(() => File, (file) => file.article)
   files: File[];
+
+  likeCount: number;
 }
