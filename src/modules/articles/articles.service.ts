@@ -43,12 +43,15 @@ export class ArticlesService {
 
   async getArticles(boardId, articlePageQuery: ArticlePageQuery) {
     return this.dataSource.transaction(async (manager) => {
-      return await manager.findAndCount(Article, {
-        where: { board: { id: boardId } },
-        relations: { author: true, board: true },
-        skip: articlePageQuery.getOffset(),
-        take: articlePageQuery.getLimit(),
-      });
+      return await manager
+        .createQueryBuilder(Article, "article")
+        .leftJoinAndSelect("article.author", "author")
+        .leftJoinAndSelect("article.board", "board")
+        .where("article.board_id = :boardId", { boardId: boardId })
+        .loadRelationCountAndMap("article.likeCount", "article.likes")
+        .offset(articlePageQuery.getOffset())
+        .limit(articlePageQuery.getLimit())
+        .getManyAndCount();
     });
   }
 
