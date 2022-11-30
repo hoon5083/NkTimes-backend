@@ -79,7 +79,11 @@ export class ArticlesController {
 
   @Delete(":boardId/:id/like")
   @UseGuards(GoogleAuthGuard({ strict: true }))
-  async deleteLike() {
-    return await this.articlesService.deleteLike();
+  async deleteLike(
+    @CurrentUser() currentUser,
+    @Param("boardId") boardId: number,
+    @Param("id") id: number
+  ) {
+    return await this.articlesService.deleteLike(currentUser, id, boardId);
   }
 }

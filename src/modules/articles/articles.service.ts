@@ -163,7 +163,35 @@ export class ArticlesService {
     });
   }
 
-  async deleteLike() {
-    return "deleteLike";
+  async deleteLike(currentUser, id: number, boardId: number) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { email: currentUser.email },
+      });
+      if (user.authority === UserEnum.PENDING) {
+        throw new ForbiddenException("Pending User");
+      }
+      const board = await manager.findOne(Board, { where: { id: boardId } });
+      if (!board) {
+        throw new BadRequestException("There is no board with the id");
+      }
+      const article = await manager.findOne(Article, {
+        where: { id },
+        relations: { author: true, files: true, board: true },
+      });
+      if (!article) {
+        throw new NotFoundException("there is no article with the id");
+      }
+      if (article.board.id !== boardId) {
+        throw new BadRequestException("The article is not in the board");
+      }
+      const userLike = await manager.findOne(Like, {
+        where: { user: { email: currentUser.email } },
+      });
+      if (!userLike) {
+        throw new BadRequestException("Not liked");
+      }
+      return await manager.delete(Like, userLike.id);
+    });
   }
 }
