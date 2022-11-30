@@ -14,6 +14,7 @@ import { CurrentUser } from "src/common/decorators/user.decorator";
 import { ArticlesService } from "./articles.service";
 import { ArticleDetailDto } from "./dtos/article.dto";
 import { CreateArticleDto } from "./dtos/create-article.dto";
+import { UpdateArticleDto } from "./dtos/update-article.dto";
 
 @Controller("articles")
 export class ArticlesController {
@@ -47,14 +48,23 @@ export class ArticlesController {
 
   @Patch(":boardId/:id")
   @UseGuards(GoogleAuthGuard({ strict: true }))
-  async updateArticle() {
-    return await this.articlesService.updateArticle();
+  async updateArticle(
+    @CurrentUser() currentUser,
+    @Param("boardId") boardId: number,
+    @Param("id") id: number,
+    @Body() updateArticleDto: UpdateArticleDto
+  ) {
+    return await this.articlesService.updateArticle(currentUser, id, boardId, updateArticleDto);
   }
 
   @Delete(":boardId/:id")
   @UseGuards(GoogleAuthGuard({ strict: true }))
-  async deleteArticle() {
-    return await this.articlesService.deleteArticle();
+  async deleteArticle(
+    @CurrentUser() currentUser,
+    @Param("boardId") boardId: number,
+    @Param("id") id: number
+  ) {
+    return await this.articlesService.deleteArticle(currentUser, id, boardId);
   }
 
   @Post(":boardId/:id/like")
