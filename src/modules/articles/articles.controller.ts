@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { ArticlesService } from "./articles.service";
+import { ArticlePageQuery } from "./dtos/article-page-query.dto";
+import { ArticlePageDto } from "./dtos/article-page.dto";
 import { ArticleDetailDto } from "./dtos/article.dto";
 import { CreateArticleDto } from "./dtos/create-article.dto";
 import { UpdateArticleDto } from "./dtos/update-article.dto";
@@ -31,9 +34,17 @@ export class ArticlesController {
   }
 
   @Get(":boardId")
-  @UseGuards(GoogleAuthGuard({ strict: false }))
-  async getArticles() {
-    return await this.articlesService.getArticles();
+  async getArticles(
+    @Query() articlePageQuery: ArticlePageQuery,
+    @Param("boardId") boardId: number
+  ) {
+    const [articles, count] = await this.articlesService.getArticles(boardId, articlePageQuery);
+    return new ArticlePageDto(
+      count,
+      articlePageQuery.getLimit(),
+      articlePageQuery.pageNumber,
+      articles
+    );
   }
 
   @Get(":boardId/:id")

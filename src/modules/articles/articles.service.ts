@@ -10,6 +10,7 @@ import { Like } from "src/common/entities/like.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
+import { ArticlePageQuery } from "./dtos/article-page-query.dto";
 import { CreateArticleDto } from "./dtos/create-article.dto";
 import { UpdateArticleDto } from "./dtos/update-article.dto";
 
@@ -40,8 +41,15 @@ export class ArticlesService {
     });
   }
 
-  async getArticles() {
-    return "getArticles";
+  async getArticles(boardId, articlePageQuery: ArticlePageQuery) {
+    return this.dataSource.transaction(async (manager) => {
+      return await manager.findAndCount(Article, {
+        where: { board: { id: boardId } },
+        relations: { author: true, board: true },
+        skip: articlePageQuery.getOffset(),
+        take: articlePageQuery.getLimit(),
+      });
+    });
   }
 
   async getArticle(currentUser, id: number, boardId: number) {
