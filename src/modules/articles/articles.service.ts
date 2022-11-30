@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { Article } from "src/common/entities/article.entity";
 import { Board } from "src/common/entities/board.entity";
+import { Like } from "src/common/entities/like.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
@@ -129,8 +130,37 @@ export class ArticlesService {
     });
   }
 
-  async createLike() {
-    return "createLike";
+  async createLike(currentUser, id, boardId) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { email: currentUser.email },
+      });
+      if (user.authority === UserEnum.PENDING) {
+        throw new ForbiddenException("Pending User");
+      }
+      const board = await manager.findOne(Board, { where: { id: boardId } });
+      if (!board) {
+        throw new BadRequestException("There is no board with the id");
+      }
+      const article = await manager.findOne(Article, {
+        where: { id },
+        relations: { author: true, files: true, board: true },
+      });
+      if (!article) {
+        throw new NotFoundException("there is no article with the id");
+      }
+      if (article.board.id !== boardId) {
+        throw new BadRequestException("The article is not in the board");
+      }
+      const isLiked = Boolean(
+        await manager.count(Like, { where: { user: { email: currentUser.email } } })
+      );
+      if (isLiked !== false) {
+        throw new BadRequestException("Already liked");
+      }
+      const like = await manager.create(Like, { user: user, article: article });
+      return await manager.save(like);
+    });
   }
 
   async deleteLike() {

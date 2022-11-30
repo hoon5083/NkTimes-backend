@@ -69,8 +69,12 @@ export class ArticlesController {
 
   @Post(":boardId/:id/like")
   @UseGuards(GoogleAuthGuard({ strict: true }))
-  async createLike() {
-    return await this.articlesService.createLike();
+  async createLike(
+    @CurrentUser() currentUser,
+    @Param("boardId") boardId: number,
+    @Param("id") id: number
+  ) {
+    return await this.articlesService.createLike(currentUser, id, boardId);
   }
 
   @Delete(":boardId/:id/like")
