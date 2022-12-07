@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { CommentsService } from "./comments.service";
@@ -32,7 +32,7 @@ export class CommentsController {
   }
 
   @Delete(":id")
-  async deleteComment() {
-    return await this.commentsService.deleteComment();
+  async deleteComment(@CurrentUser() currentUser, @Param("id") id: number) {
+    return await this.commentsService.deleteComment(currentUser, id);
   }
 }

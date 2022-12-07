@@ -16,7 +16,7 @@ import { CreateCommentDto } from "./dtos/create-comment.dto";
 export class CommentsService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async createComment(currentUser, articleId, createCommentDto: CreateCommentDto) {
+  async createComment(currentUser, articleId: number, createCommentDto: CreateCommentDto) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
@@ -58,7 +58,25 @@ export class CommentsService {
     });
   }
 
-  async deleteComment() {
-    return "deleteComment";
+  async deleteComment(currentUser, id: number) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException();
+      } else if (user.authority === UserEnum.PENDING) {
+        throw new ForbiddenException();
+      }
+      const comment = await manager.findOne(Comment, {
+        where: { id: id },
+        relations: { author: true },
+      });
+      if (comment.isDeleted) {
+        throw new BadRequestException("already deleted");
+      } else if (user.id !== comment.author.id && user.authority !== UserEnum.ADMIN) {
+        throw new ForbiddenException("not your comment");
+      }
+      comment.isDeleted = true;
+      return await manager.update(Comment, id, comment);
+    });
   }
 }
