@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { SuccessDto } from "src/common/dtos/success.dto";
 import { BoardsService } from "./boards.service";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
 import { BoardDetailPageDto, BoardPageDto } from "./dtos/board-page.dto";
@@ -67,6 +68,6 @@ export class BoardsController {
   @Delete(":id")
   @UseGuards(GoogleAuthGuard({ strict: true }))
   async deleteBoard(@CurrentUser() currentUser, @Param("id", ParseIntPipe) id: number) {
-    return await this.boardsService.deleteBoard(currentUser, id);
+    return new SuccessDto(await this.boardsService.deleteBoard(currentUser, id));
   }
 }

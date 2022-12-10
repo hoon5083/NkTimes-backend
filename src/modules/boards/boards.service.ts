@@ -118,7 +118,11 @@ export class BoardsService {
       } else if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException();
       }
-      await manager.delete(Board, id);
+      if (Boolean((await manager.delete(Board, id)).affected)) {
+        return true;
+      } else {
+        throw new BadRequestException();
+      }
     });
   }
 }
