@@ -90,7 +90,7 @@ export class ArticlesController {
     @Param("boardId") boardId: number,
     @Param("id") id: number
   ) {
-    return await this.articlesService.createLike(currentUser, id, boardId);
+    return new SuccessDto(await this.articlesService.createLike(currentUser, id, boardId));
   }
 
   @Delete(":boardId/:id/like")
@@ -100,6 +100,6 @@ export class ArticlesController {
     @Param("boardId") boardId: number,
     @Param("id") id: number
   ) {
-    return await this.articlesService.deleteLike(currentUser, id, boardId);
+    return new SuccessDto(await this.articlesService.deleteLike(currentUser, id, boardId));
   }
 }

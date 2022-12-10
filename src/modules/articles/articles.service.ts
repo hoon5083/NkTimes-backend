@@ -176,7 +176,8 @@ export class ArticlesService {
         throw new BadRequestException("Already liked");
       }
       const like = await manager.create(Like, { user: user, article: article });
-      return await manager.save(like);
+      await manager.save(like);
+      return true;
     });
   }
 
@@ -208,7 +209,7 @@ export class ArticlesService {
       if (!userLike) {
         throw new BadRequestException("Not liked");
       }
-      return await manager.delete(Like, userLike.id);
+      return Boolean((await manager.delete(Like, userLike.id)).affected);
     });
   }
 }
