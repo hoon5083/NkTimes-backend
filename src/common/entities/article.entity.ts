@@ -49,4 +49,5 @@ export class Article {
   files: File[];
 
   likeCount: number;
+  //isLiked: boolean;
 }

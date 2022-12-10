@@ -30,7 +30,9 @@ export class ArticlesController {
     @Param("boardId", ParseIntPipe) boardId: number,
     @Body() createArticleDto: CreateArticleDto
   ) {
-    return await this.articlesService.createArticle(currentUser, boardId, createArticleDto);
+    return new ArticleDetailDto(
+      await this.articlesService.createArticle(currentUser, boardId, createArticleDto)
+    );
   }
 
   @Get(":boardId")

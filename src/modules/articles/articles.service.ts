@@ -73,7 +73,6 @@ export class ArticlesService {
       if (article.board.id !== boardId) {
         throw new BadRequestException("The article is not in the board");
       }
-
       return article;
     });
   }
