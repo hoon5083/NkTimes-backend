@@ -168,7 +168,9 @@ export class ArticlesService {
         throw new BadRequestException("The article is not in the board");
       }
       const isLiked = Boolean(
-        await manager.count(Like, { where: { user: { email: currentUser.email } } })
+        await manager.count(Like, {
+          where: { user: { email: currentUser.email }, article: { id: id } },
+        })
       );
       if (isLiked !== false) {
         throw new BadRequestException("Already liked");
@@ -201,7 +203,7 @@ export class ArticlesService {
         throw new BadRequestException("The article is not in the board");
       }
       const userLike = await manager.findOne(Like, {
-        where: { user: { email: currentUser.email } },
+        where: { user: { email: currentUser.email }, article: { id: id } },
       });
       if (!userLike) {
         throw new BadRequestException("Not liked");
