@@ -63,10 +63,14 @@ export class ArticlesService {
       if (user.authority === UserEnum.PENDING) {
         throw new ForbiddenException("Pending User");
       }
-      const article = await manager.findOne(Article, {
-        where: { id },
-        relations: { author: true, files: true, board: true },
-      });
+      const article = await manager
+        .createQueryBuilder(Article, "article")
+        .leftJoinAndSelect("article.author", "author")
+        .leftJoinAndSelect("article.board", "board")
+        .leftJoinAndSelect("article.files", "file")
+        .where("article.id = :id", { id: id })
+        .loadRelationCountAndMap("article.likeCount", "article.likes")
+        .getOne();
       if (!article) {
         throw new NotFoundException("there is no article with the id");
       }
