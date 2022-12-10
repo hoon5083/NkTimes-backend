@@ -12,11 +12,12 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { SuccessDto } from "src/common/dtos/success.dto";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { UpdateUserDetailDto, UpdateUserDto } from "./dtos/update-user.dto";
 import { UserPageQuery } from "./dtos/user-page-query.dto";
 import { UserPageDto } from "./dtos/user-page.dto";
-import { UserDto } from "./dtos/user.dto";
+import { UserDetailDto, UserDto } from "./dtos/user.dto";
 import { UsersService } from "./users.service";
 
 @Controller("users")
@@ -38,22 +39,23 @@ export class UsersController {
   @Get("me")
   async getMe(@CurrentUser() currentUser) {
     const user = await this.usersService.getMe(currentUser);
-    return new UserDto(user);
+    return new UserDetailDto(user);
   }
 
   @Patch("me")
-  async updateMe(@CurrentUser() currentUser, updateUserDto: UpdateUserDto) {
-    return await this.usersService.updateMe(currentUser, updateUserDto);
+  async updateMe(@CurrentUser() currentUser, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.updateMe(currentUser, updateUserDto);
+    return new UserDetailDto(user);
   }
 
   @Delete("me")
   async deleteMe(@CurrentUser() currentUser) {
-    return await this.usersService.deleteMe(currentUser); // 응답 수정 필요할 수도
+    return new SuccessDto(await this.usersService.deleteMe(currentUser));
   }
 
   @Delete(":id")
   async deleteUser(@Param("id", ParseIntPipe) id: number, @CurrentUser() currentUser) {
-    return await this.usersService.deleteUser(id, currentUser); // 응답 수정 필요
+    return new SuccessDto(await this.usersService.deleteUser(id, currentUser));
   }
 
   @Patch(":id")
@@ -62,6 +64,7 @@ export class UsersController {
     @CurrentUser() currentUser,
     @Body() updateUserDetailDto: UpdateUserDetailDto
   ) {
-    return await this.usersService.updateUser(id, currentUser, updateUserDetailDto);
+    const user = await this.usersService.updateUser(id, currentUser, updateUserDetailDto);
+    return new UserDetailDto(user);
   }
 }

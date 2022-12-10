@@ -24,13 +24,13 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   phone: string;
-
-  @IsOptional()
-  @IsString()
-  name: string;
 }
 
 export class UpdateUserDetailDto extends UpdateUserDto {
+  @IsOptional()
+  @IsString()
+  name: string;
+
   @IsOptional()
   @IsEnum(UserEnum)
   authority: UserEnum;

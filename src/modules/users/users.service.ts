@@ -9,6 +9,7 @@ import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
 import { CreateUserDto } from "./dtos/create-user.dto";
+import { UpdateUserDetailDto, UpdateUserDto } from "./dtos/update-user.dto";
 import { UserPageQuery } from "./dtos/user-page-query.dto";
 
 function valueToBoolean(value: any) {
@@ -90,7 +91,7 @@ export class UsersService {
     });
   }
 
-  async updateMe(currentUser, updateUserDto) {
+  async updateMe(currentUser, updateUserDto: UpdateUserDto) {
     return await this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
@@ -99,13 +100,13 @@ export class UsersService {
       if (!user.isApproved) {
         throw new ForbiddenException("Register is pending");
       }
-      return await manager.update(User, user.id, updateUserDto);
+      await manager.update(User, user.id, updateUserDto);
+      return Object.assign(user, updateUserDto);
     });
   }
 
   async deleteMe(currentUser) {
     return await this.dataSource.transaction(async (manager) => {
-      console.log(currentUser);
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
         throw new UnauthorizedException("Not Registered");
@@ -116,7 +117,7 @@ export class UsersService {
       if (user.authority === UserEnum.ADMIN) {
         throw new BadRequestException("Cannot delete admin yourself");
       }
-      return await manager.delete(User, user.id);
+      return Boolean((await manager.delete(User, user.id)).affected);
     });
   }
 
@@ -135,11 +136,11 @@ export class UsersService {
       if (user.id === id) {
         throw new BadRequestException("Cannot delete admin yourself");
       }
-      return await manager.delete(User, id);
+      return Boolean((await manager.delete(User, id)).affected);
     });
   }
 
-  async updateUser(id: number, currentUser, updateUserDetailDto) {
+  async updateUser(id: number, currentUser, updateUserDetailDto: UpdateUserDetailDto) {
     return await this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
@@ -151,7 +152,8 @@ export class UsersService {
       if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("Only Admin users can update users");
       }
-      return await manager.update(User, id, updateUserDetailDto);
+      await manager.update(User, id, updateUserDetailDto);
+      return Object.assign(user, updateUserDetailDto);
     });
   }
 }
