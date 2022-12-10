@@ -16,7 +16,7 @@ export class TalkingsService {
       createTalkingDto.author = await manager.findOne(User, {
         where: { email: currentUser.email },
       });
-      const talking = await manager.create(Talking, createTalkingDto);
+      const talking = await manager.create<Talking>(Talking, createTalkingDto);
       await manager.save(talking);
       return talking;
     });

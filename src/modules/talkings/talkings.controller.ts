@@ -12,9 +12,11 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { AuthorDto } from "src/common/dtos/author.dto";
 import { CreateTalkingDto } from "./dtos/create-talkings.dto";
 import { TalkingPageQuery } from "./dtos/talking-page-query.dto";
 import { TalkingPageDto } from "./dtos/talking-page.dto";
+import { TalkingDto } from "./dtos/talking.dto";
 import { UpdateTalkingDto } from "./dtos/update-talking.dto";
 import { TalkingsService } from "./talkings.service";
 
@@ -25,7 +27,7 @@ export class TalkingsController {
 
   @Post()
   async createTalking(@CurrentUser() currentUser, @Body() createTalkingDto: CreateTalkingDto) {
-    return this.talkingsService.createTalking(currentUser, createTalkingDto);
+    return new TalkingDto(await this.talkingsService.createTalking(currentUser, createTalkingDto));
   }
 
   @Get()
