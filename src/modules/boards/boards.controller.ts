@@ -15,7 +15,7 @@ import { CurrentUser } from "src/common/decorators/user.decorator";
 import { BoardsService } from "./boards.service";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
 import { BoardPageDto } from "./dtos/board-page.dto";
-import { BoardDto } from "./dtos/board.dto";
+import { BoardDetailDto, BoardDto } from "./dtos/board.dto";
 import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
@@ -26,7 +26,7 @@ export class BoardsController {
   @Post()
   @UseGuards(GoogleAuthGuard({ strict: true }))
   async createBoard(@CurrentUser() currentUser, @Body() createBoardDto: CreateBoardDto) {
-    return await this.boardsService.createBoard(currentUser, createBoardDto);
+    return new BoardDetailDto(await this.boardsService.createBoard(currentUser, createBoardDto));
   }
 
   @Get()
