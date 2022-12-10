@@ -50,7 +50,9 @@ export class BoardsController {
     @Param("id", ParseIntPipe) id: number,
     @Body() updateBoardDto: UpdateBoardDto
   ) {
-    return await this.boardsService.updateBoard(currentUser, id, updateBoardDto);
+    return new BoardDetailDto(
+      await this.boardsService.updateBoard(currentUser, id, updateBoardDto)
+    );
   }
 
   @Delete(":id")

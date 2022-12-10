@@ -9,6 +9,8 @@ import { Board } from "src/common/entities/board.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
+import { BoardPageQuery } from "./dtos/board-page-query.dto";
+import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
 function valueToBoolean(value: any) {
@@ -94,7 +96,8 @@ export class BoardsService {
       } else if (board.applicant.id !== user.id) {
         throw new ForbiddenException();
       }
-      return await manager.update(Board, id, updateBoardDto);
+      await manager.update(Board, id, updateBoardDto);
+      return Object.assign(board, updateBoardDto);
     });
   }
 
