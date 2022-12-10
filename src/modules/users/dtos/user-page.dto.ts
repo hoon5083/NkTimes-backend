@@ -1,16 +1,16 @@
 import { PageDto } from "src/common/dtos/pagination/page.dto";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
-import { UserDetailDto } from "./user.dto";
+import { UserDto } from "./user.dto";
 
-export class UserPageDto extends PageDto<UserDetailDto> {
+export class UserPageDto extends PageDto<UserDto> {
   constructor(totalCount: number, pageSize: number, pageNumber: number, users: User[]) {
     super(
       totalCount,
       pageSize,
       pageNumber,
       users.map((user) => {
-        return new UserDetailDto(user);
+        return new UserDto(user);
       })
     );
     this.metadata = new MetaData();

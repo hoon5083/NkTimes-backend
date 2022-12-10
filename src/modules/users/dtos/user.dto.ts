@@ -10,6 +10,9 @@ export class UserDto {
     this.grade = user.grade;
     this.class = user.class;
     this.studentId = user.studentId;
+    this.phone = user.phone;
+    this.name = user.name;
+    this.isApproved = user.isApproved;
   }
   id: number;
   nickname: string;
@@ -18,15 +21,6 @@ export class UserDto {
   grade?: number;
   class?: number;
   studentId?: number;
-}
-
-export class UserDetailDto extends UserDto {
-  constructor(user: User) {
-    super(user);
-    this.phone = user.phone;
-    this.name = user.name;
-    this.isApproved = user.isApproved;
-  }
   phone: string;
   name: string;
   isApproved: boolean;
