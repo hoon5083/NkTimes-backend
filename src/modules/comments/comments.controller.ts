@@ -4,6 +4,7 @@ import { CurrentUser } from "src/common/decorators/user.decorator";
 import { CommentsService } from "./comments.service";
 import { CommentPageQuery } from "./dtos/comment-page-query.dto";
 import { CommentPageDto } from "./dtos/comment-page.dto";
+import { CommentDto } from "./dtos/comment.dto";
 import { CreateCommentDto } from "./dtos/create-comment.dto";
 
 @Controller("comments")
@@ -17,7 +18,9 @@ export class CommentsController {
     @Query("articleId") articleId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    return await this.commentsService.createComment(currentUser, articleId, createCommentDto);
+    return new CommentDto(
+      await this.commentsService.createComment(currentUser, articleId, createCommentDto)
+    );
   }
 
   @Get()
