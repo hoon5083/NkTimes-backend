@@ -111,7 +111,8 @@ export class ArticlesService {
       if (article.author.email !== currentUser.email) {
         throw new ForbiddenException("Not your article");
       }
-      return await manager.update(Article, id, updateArticleDto);
+      await manager.update(Article, id, updateArticleDto);
+      return Object.assign(article, updateArticleDto);
     });
   }
 

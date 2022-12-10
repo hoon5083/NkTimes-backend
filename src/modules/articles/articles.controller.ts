@@ -67,7 +67,9 @@ export class ArticlesController {
     @Param("id") id: number,
     @Body() updateArticleDto: UpdateArticleDto
   ) {
-    return await this.articlesService.updateArticle(currentUser, id, boardId, updateArticleDto);
+    return new ArticleDetailDto(
+      await this.articlesService.updateArticle(currentUser, id, boardId, updateArticleDto)
+    );
   }
 
   @Delete(":boardId/:id")
