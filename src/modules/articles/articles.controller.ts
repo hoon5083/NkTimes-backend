@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { SuccessDto } from "src/common/dtos/success.dto";
 import { ArticlesService } from "./articles.service";
 import { ArticlePageQuery } from "./dtos/article-page-query.dto";
 import { ArticlePageDto } from "./dtos/article-page.dto";
@@ -79,7 +80,7 @@ export class ArticlesController {
     @Param("boardId") boardId: number,
     @Param("id") id: number
   ) {
-    return await this.articlesService.deleteArticle(currentUser, id, boardId);
+    return new SuccessDto(await this.articlesService.deleteArticle(currentUser, id, boardId));
   }
 
   @Post(":boardId/:id/like")

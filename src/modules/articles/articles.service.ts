@@ -141,7 +141,7 @@ export class ArticlesService {
       if (article.author.email !== currentUser.email) {
         throw new ForbiddenException("Not your article");
       }
-      return await manager.delete(Article, id);
+      return Boolean((await manager.delete(Article, id)).affected);
     });
   }
 
