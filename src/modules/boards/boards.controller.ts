@@ -14,7 +14,7 @@ import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
 import { BoardsService } from "./boards.service";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
-import { BoardPageDto } from "./dtos/board-page.dto";
+import { BoardDetailPageDto, BoardPageDto } from "./dtos/board-page.dto";
 import { BoardDetailDto, BoardDto } from "./dtos/board.dto";
 import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
@@ -33,7 +33,16 @@ export class BoardsController {
   @UseGuards(GoogleAuthGuard({ strict: false }))
   async getBoards(@CurrentUser() currentUser, @Query() boardPageQuery: BoardPageQuery) {
     const [boards, count] = await this.boardsService.getBoards(currentUser, boardPageQuery);
-    return new BoardPageDto(count, boardPageQuery.getLimit(), boardPageQuery.pageNumber, boards);
+    if (boardPageQuery.viewAll || boardPageQuery.isPending) {
+      return new BoardDetailPageDto(
+        count,
+        boardPageQuery.getLimit(),
+        boardPageQuery.pageNumber,
+        boards
+      );
+    } else {
+      return new BoardPageDto(count, boardPageQuery.getLimit(), boardPageQuery.pageNumber, boards);
+    }
   }
 
   @Get(":id")

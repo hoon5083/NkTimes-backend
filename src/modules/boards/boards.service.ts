@@ -47,18 +47,27 @@ export class BoardsService {
     });
   }
 
-  async getBoards(currentUser, getBoardsQuery) {
+  async getBoards(currentUser, getBoardsQuery: BoardPageQuery) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
-      if (valueToBoolean(getBoardsQuery.viewAll) === true && user.authority !== UserEnum.ADMIN) {
+      if (
+        (valueToBoolean(getBoardsQuery.viewAll) || valueToBoolean(getBoardsQuery.isPending)) ===
+          true &&
+        user.authority !== UserEnum.ADMIN
+      ) {
         throw new ForbiddenException("Only admin can get not approved boards");
       }
       const queryBuilder = manager
         .createQueryBuilder(Board, "board")
-        .leftJoinAndSelect("board.applicant", "applicant");
-      if (!valueToBoolean(getBoardsQuery.viewAll)) {
+        .leftJoinAndSelect("board.applicant", "applicant")
+        .limit(getBoardsQuery.getLimit())
+        .offset(getBoardsQuery.getOffset());
+      if (valueToBoolean(getBoardsQuery.isPending)) {
+        queryBuilder.where("board.is_approved = false");
+      } else if (!valueToBoolean(getBoardsQuery.viewAll)) {
         queryBuilder.where("board.is_approved = true");
       }
+
       return await queryBuilder.getManyAndCount();
     });
   }
