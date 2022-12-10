@@ -12,7 +12,6 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
-import { AuthorDto } from "src/common/dtos/author.dto";
 import { CreateTalkingDto } from "./dtos/create-talkings.dto";
 import { TalkingPageQuery } from "./dtos/talking-page-query.dto";
 import { TalkingPageDto } from "./dtos/talking-page.dto";
@@ -47,7 +46,8 @@ export class TalkingsController {
     @Param("id", ParseIntPipe) id: number,
     @Body() updateTalkingDto: UpdateTalkingDto
   ) {
-    return this.talkingsService.updateTalking(currentUser, id, updateTalkingDto);
+    const talking = await this.talkingsService.updateTalking(currentUser, id, updateTalkingDto);
+    return new TalkingDto(talking);
   }
 
   @Delete(":id")

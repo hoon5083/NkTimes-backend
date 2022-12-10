@@ -42,7 +42,8 @@ export class TalkingsService {
       if (talking.author.email !== currentUser.email) {
         throw new ForbiddenException("You are not an author");
       }
-      return await manager.update(Talking, id, updateTalkingDto);
+      await manager.update(Talking, id, updateTalkingDto);
+      return Object.assign(talking, updateTalkingDto);
     });
   }
 
