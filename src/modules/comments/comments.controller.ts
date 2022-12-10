@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { SuccessDto } from "src/common/dtos/success.dto";
 import { CommentsService } from "./comments.service";
 import { CommentPageQuery } from "./dtos/comment-page-query.dto";
 import { CommentPageDto } from "./dtos/comment-page.dto";
@@ -36,6 +37,6 @@ export class CommentsController {
 
   @Delete(":id")
   async deleteComment(@CurrentUser() currentUser, @Param("id") id: number) {
-    return await this.commentsService.deleteComment(currentUser, id);
+    return new SuccessDto(await this.commentsService.deleteComment(currentUser, id));
   }
 }

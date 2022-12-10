@@ -71,12 +71,12 @@ export class CommentsService {
         relations: { author: true },
       });
       if (comment.isDeleted) {
-        throw new BadRequestException("already deleted");
+        throw new BadRequestException("not exist");
       } else if (user.id !== comment.author.id && user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("not your comment");
       }
       comment.isDeleted = true;
-      return await manager.update(Comment, id, comment);
+      return Boolean((await manager.update(Comment, id, comment)).affected);
     });
   }
 }
