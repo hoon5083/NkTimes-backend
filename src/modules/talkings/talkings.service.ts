@@ -59,7 +59,7 @@ export class TalkingsService {
       ) {
         throw new ForbiddenException("You are not an author or admin");
       }
-      return await manager.delete(Talking, id);
+      return Boolean((await manager.delete(Talking, id)).affected);
     });
   }
 }

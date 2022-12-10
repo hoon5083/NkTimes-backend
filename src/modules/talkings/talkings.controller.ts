@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "src/auth/google/google-auth.guard";
 import { CurrentUser } from "src/common/decorators/user.decorator";
+import { SuccessDto } from "src/common/dtos/success.dto";
 import { CreateTalkingDto } from "./dtos/create-talkings.dto";
 import { TalkingPageQuery } from "./dtos/talking-page-query.dto";
 import { TalkingPageDto } from "./dtos/talking-page.dto";
@@ -52,6 +53,6 @@ export class TalkingsController {
 
   @Delete(":id")
   async deleteTalking(@CurrentUser() currentUser, @Param("id", ParseIntPipe) id: number) {
-    return this.talkingsService.deleteTalking(currentUser, id);
+    return new SuccessDto(await this.talkingsService.deleteTalking(currentUser, id));
   }
 }
