@@ -54,6 +54,7 @@ export class CommentsService {
           article: true,
           author: true,
         },
+        order: { createdAt: "DESC" },
         take: commentPageQuery.getLimit(),
         skip: commentPageQuery.getOffset(),
       });

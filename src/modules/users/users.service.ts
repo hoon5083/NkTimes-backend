@@ -45,7 +45,8 @@ export class UsersService {
       const queryBuilder = manager
         .createQueryBuilder(User, "user")
         .limit(userPageQuery.getLimit())
-        .offset(userPageQuery.getOffset());
+        .offset(userPageQuery.getOffset())
+        .orderBy("user.id", "DESC");
       if (valueToBoolean(userPageQuery.isPending)) {
         queryBuilder.where("user.is_approved = false");
       }

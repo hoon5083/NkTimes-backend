@@ -63,6 +63,7 @@ export class ArticlesService {
         .loadRelationCountAndMap("article.likeCount", "article.likes")
         .offset(articlePageQuery.getOffset())
         .limit(articlePageQuery.getLimit())
+        .orderBy("article.createdAt", "DESC")
         .getManyAndCount();
     });
   }
