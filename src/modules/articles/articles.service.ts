@@ -32,6 +32,10 @@ export class ArticlesService {
       if (!board) {
         throw new BadRequestException("There is no board with the id");
       }
+      const whitelist = board.whitelist.split(" ");
+      if (whitelist.indexOf(user.authority) === -1) {
+        throw new ForbiddenException("not allowed");
+      }
       const files: File[] = [];
       for (const key of createArticleDto.fileKeys) {
         files.push(await manager.findOne(File, { where: { key: key } }));
