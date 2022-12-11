@@ -27,8 +27,8 @@ export class MinioClientService implements FileClientService {
   ) {
     const metaData = {
       "Content-Type": mimeType,
-      createdAt,
-      originalName,
+      createdAt: createdAt.toUTCString,
+      originalName: encodeURI(originalName),
     };
 
     try {

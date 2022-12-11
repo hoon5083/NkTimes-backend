@@ -35,7 +35,7 @@ export class Article {
   @JoinColumn()
   author: User;
 
-  @ManyToOne(() => Board, (board) => board.articles, { nullable: false })
+  @ManyToOne(() => Board, (board) => board.articles, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn()
   board: Board;
 

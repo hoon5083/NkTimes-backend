@@ -11,7 +11,7 @@ export class Like {
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => Article, (article) => article.likes, { nullable: false })
+  @ManyToOne(() => Article, (article) => article.likes, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn()
   article: Article;
 }

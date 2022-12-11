@@ -27,10 +27,10 @@ export class File {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToOne(() => Popup, (popup) => popup.file)
+  @OneToOne(() => Popup, (popup) => popup.file, { onDelete: "CASCADE" })
   popup: Popup;
 
-  @ManyToOne(() => Article, (article) => article.files)
+  @ManyToOne(() => Article, (article) => article.files, { onDelete: "CASCADE" })
   @JoinColumn()
   article: Article;
 }

@@ -19,6 +19,6 @@ export class Comment {
   @ManyToOne(() => User, (user) => user.comments, { nullable: false })
   author: User;
 
-  @ManyToOne(() => Article, (article) => article.comments, { nullable: false })
+  @ManyToOne(() => Article, (article) => article.comments, { nullable: false, onDelete: "CASCADE" })
   article: Article;
 }
