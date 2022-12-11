@@ -10,7 +10,6 @@ export class ArticleBriefDto {
     this.author = new AuthorDto(article.author);
     this.board = { id: article.board.id, title: article.board.title };
     this.likeCount = article.likeCount;
-    //this.isLiked = article.isLiked;
   }
 
   id: number;
@@ -20,7 +19,6 @@ export class ArticleBriefDto {
   author: AuthorDto;
   board: { id: number; title: string };
   likeCount: number;
-  //isLiked: boolean;
 }
 
 export class ArticleDetailDto extends ArticleBriefDto {
@@ -28,8 +26,9 @@ export class ArticleDetailDto extends ArticleBriefDto {
     super(article);
     this.content = article.content;
     this.fileKeys = article.files ? article.files.map((file) => file.key) : [];
+    this.isLiked = Boolean(article.userLikeCount);
   }
-
+  isLiked: boolean;
   content: string;
   fileKeys: string[];
 }

@@ -69,7 +69,11 @@ export class ArticlesService {
         .leftJoinAndSelect("article.board", "board")
         .leftJoinAndSelect("article.files", "file")
         .where("article.id = :id", { id: id })
+        .loadRelationCountAndMap("article.userLikeCount", "article.likes", "like", (qb) =>
+          qb.where("like.user_id = :id", { id: user.id })
+        )
         .loadRelationCountAndMap("article.likeCount", "article.likes")
+
         .getOne();
       if (!article) {
         throw new NotFoundException("there is no article with the id");
