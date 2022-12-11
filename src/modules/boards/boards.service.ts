@@ -10,6 +10,7 @@ import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource, Not } from "typeorm";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
+import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
 function valueToBoolean(value: any) {
@@ -31,7 +32,7 @@ function valueToBoolean(value: any) {
 export class BoardsService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async createBoard(currentUser, createBoardDto) {
+  async createBoard(currentUser, createBoardDto: CreateBoardDto) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
@@ -47,7 +48,7 @@ export class BoardsService {
         throw new BadRequestException("title duplicated");
       }
       createBoardDto.applicant = user;
-      const board = await manager.create(Board, createBoardDto);
+      const board = await manager.create<Board>(Board, createBoardDto);
       await manager.save(board);
       return board;
     });
@@ -84,7 +85,7 @@ export class BoardsService {
     });
   }
 
-  async getBoard(currentUser, id) {
+  async getBoard(currentUser, id: number) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
@@ -103,7 +104,7 @@ export class BoardsService {
     });
   }
 
-  async updateBoard(currentUser, id, updateBoardDto: UpdateBoardDto) {
+  async updateBoard(currentUser, id: number, updateBoardDto: UpdateBoardDto) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
@@ -129,7 +130,7 @@ export class BoardsService {
     });
   }
 
-  async deleteBoard(currentUser, id) {
+  async deleteBoard(currentUser, id: number) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {

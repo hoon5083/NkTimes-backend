@@ -53,7 +53,7 @@ export class ArticlesService {
     });
   }
 
-  async getArticles(boardId, articlePageQuery: ArticlePageQuery) {
+  async getArticles(boardId: number, articlePageQuery: ArticlePageQuery) {
     return this.dataSource.transaction(async (manager) => {
       return await manager
         .createQueryBuilder(Article, "article")
@@ -165,7 +165,7 @@ export class ArticlesService {
     });
   }
 
-  async createLike(currentUser, id, boardId) {
+  async createLike(currentUser, id: number, boardId: number) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {

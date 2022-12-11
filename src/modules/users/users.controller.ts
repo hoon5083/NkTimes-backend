@@ -33,7 +33,7 @@ export class UsersController {
 
   @Post()
   async createUser(@CurrentUser() currentUser, @Body() createUserDto: CreateUserDto) {
-    return await this.usersService.createUser(currentUser, createUserDto); // 응답 수정 필요할 수도
+    return await this.usersService.createUser(currentUser, createUserDto);
   }
 
   @Get("me")
