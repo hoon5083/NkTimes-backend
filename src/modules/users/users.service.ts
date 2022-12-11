@@ -69,10 +69,22 @@ export class UsersService {
         createUserDto.authority !== UserEnum.TEACHER &&
         (!createUserDto.class || !createUserDto.grade || !createUserDto.studentId)
       ) {
-        throw new BadRequestException("Student Info Needed");
+        throw new BadRequestException("Student Info Needed(grade, class, studentId)");
       }
       if (createUserDto.authority === UserEnum.ADMIN) {
         throw new BadRequestException("Cannot create Admin");
+      }
+      const nicknameDuplication = Boolean(
+        await manager.findOne(User, { where: { nickname: createUserDto.nickname } })
+      );
+      const phoneDuplication = Boolean(
+        await manager.findOne(User, { where: { phone: createUserDto.phone } })
+      );
+      if (nicknameDuplication) {
+        throw new BadRequestException("nickname duplicated");
+      }
+      if (phoneDuplication) {
+        throw new BadRequestException("phone duplicated");
       }
       createUserDto.email = currentUser.email;
       const user = await manager.create(User, createUserDto);

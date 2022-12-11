@@ -8,7 +8,7 @@ import {
 import { Board } from "src/common/entities/board.entity";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
-import { DataSource } from "typeorm";
+import { DataSource, Not } from "typeorm";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
@@ -39,6 +39,12 @@ export class BoardsService {
       }
       if (!user.isApproved) {
         throw new ForbiddenException("Register is pending");
+      }
+      const titleDuplication = Boolean(
+        await manager.count(Board, { where: { title: createBoardDto.title } })
+      );
+      if (titleDuplication) {
+        throw new BadRequestException("title duplicated");
       }
       createBoardDto.applicant = user;
       const board = await manager.create(Board, createBoardDto);
@@ -107,6 +113,12 @@ export class BoardsService {
         where: { id: id },
         relations: { applicant: true },
       });
+      const titleDuplication = Boolean(
+        await manager.count(Board, { where: { title: updateBoardDto.title, id: Not(id) } })
+      );
+      if (titleDuplication) {
+        throw new BadRequestException("title duplicated");
+      }
       if (updateBoardDto.isApproved !== undefined && user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException();
       } else if (board.applicant.id !== user.id) {
