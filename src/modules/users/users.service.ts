@@ -118,6 +118,18 @@ export class UsersService {
       if (!user.isApproved) {
         throw new ForbiddenException("Register is pending");
       }
+      const nicknameDuplication = Boolean(
+        await manager.findOne(User, { where: { nickname: updateUserDto.nickname } })
+      );
+      const phoneDuplication = Boolean(
+        await manager.findOne(User, { where: { phone: updateUserDto.phone } })
+      );
+      if (nicknameDuplication) {
+        throw new BadRequestException("nickname duplicated");
+      }
+      if (phoneDuplication) {
+        throw new BadRequestException("phone duplicated");
+      }
       await manager.update(User, user.id, updateUserDto);
       return Object.assign(user, updateUserDto);
     });
@@ -169,6 +181,18 @@ export class UsersService {
       }
       if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("Only Admin users can update users");
+      }
+      const nicknameDuplication = Boolean(
+        await manager.findOne(User, { where: { nickname: updateUserDetailDto.nickname } })
+      );
+      const phoneDuplication = Boolean(
+        await manager.findOne(User, { where: { phone: updateUserDetailDto.phone } })
+      );
+      if (nicknameDuplication) {
+        throw new BadRequestException("nickname duplicated");
+      }
+      if (phoneDuplication) {
+        throw new BadRequestException("phone duplicated");
       }
       await manager.update(User, id, updateUserDetailDto);
       return Object.assign(user, updateUserDetailDto);
