@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, OneToMany, Column, ManyToOne, JoinColumn } from "typeorm";
-import { UserEnum } from "../enums/user.enum";
 import { Article } from "./article.entity";
 import { User } from "./user.entity";
 

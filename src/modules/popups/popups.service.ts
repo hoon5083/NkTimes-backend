@@ -24,9 +24,7 @@ export class PopupsService {
       if (!user.isApproved) {
         throw new ForbiddenException("Register is pending");
       }
-      if (!user) {
-        throw new UnauthorizedException();
-      } else if (user.authority !== UserEnum.ADMIN) {
+      if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException();
       }
       const photo = await manager.findOne(File, { where: { key: createPopupDto.key } });
