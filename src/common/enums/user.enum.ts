@@ -1,5 +1,4 @@
 export enum UserEnum {
-  PENDING = "가입 대기",
   ADMIN = "관리자",
   GRADUATE = "졸업생",
   TEACHER = "교사",
