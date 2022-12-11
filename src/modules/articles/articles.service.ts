@@ -3,12 +3,12 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Article } from "src/common/entities/article.entity";
 import { Board } from "src/common/entities/board.entity";
 import { Like } from "src/common/entities/like.entity";
 import { User } from "src/common/entities/user.entity";
-import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
 import { ArticlePageQuery } from "./dtos/article-page-query.dto";
 import { CreateArticleDto } from "./dtos/create-article.dto";
@@ -20,11 +20,12 @@ export class ArticlesService {
 
   async createArticle(currentUser, boardId: number, createArticleDto: CreateArticleDto) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: boardId } });
       if (!board) {
@@ -57,11 +58,12 @@ export class ArticlesService {
 
   async getArticle(currentUser, id: number, boardId: number) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const article = await manager
         .createQueryBuilder(Article, "article")
@@ -92,11 +94,12 @@ export class ArticlesService {
     updateArticleDto: UpdateArticleDto
   ) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: boardId } });
       if (!board) {
@@ -122,11 +125,12 @@ export class ArticlesService {
 
   async deleteArticle(currentUser, id: number, boardId: number) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: boardId } });
       if (!board) {
@@ -151,11 +155,12 @@ export class ArticlesService {
 
   async createLike(currentUser, id, boardId) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: boardId } });
       if (!board) {
@@ -187,11 +192,12 @@ export class ArticlesService {
 
   async deleteLike(currentUser, id: number, boardId: number) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: boardId } });
       if (!board) {

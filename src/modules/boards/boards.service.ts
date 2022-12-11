@@ -10,7 +10,6 @@ import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
 import { DataSource } from "typeorm";
 import { BoardPageQuery } from "./dtos/board-page-query.dto";
-import { CreateBoardDto } from "./dtos/create-board.dto";
 import { UpdateBoardDto } from "./dtos/update-board.dto";
 
 function valueToBoolean(value: any) {
@@ -34,11 +33,12 @@ export class BoardsService {
 
   async createBoard(currentUser, createBoardDto) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
-        where: { email: currentUser.email },
-      });
-      if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException("Pending User");
+      const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       createBoardDto.applicant = user;
       const board = await manager.create(Board, createBoardDto);
@@ -50,6 +50,12 @@ export class BoardsService {
   async getBoards(currentUser, getBoardsQuery: BoardPageQuery) {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
+      }
       if (
         (valueToBoolean(getBoardsQuery.viewAll) || valueToBoolean(getBoardsQuery.isPending)) ===
           true &&
@@ -76,9 +82,10 @@ export class BoardsService {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
-        throw new UnauthorizedException();
-      } else if (user.authority === UserEnum.PENDING) {
-        throw new ForbiddenException();
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: id } });
       if (!board) {
@@ -114,7 +121,10 @@ export class BoardsService {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
       } else if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException();
       }

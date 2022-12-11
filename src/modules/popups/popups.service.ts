@@ -19,6 +19,12 @@ export class PopupsService {
     return await this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
+      }
+      if (!user) {
         throw new UnauthorizedException();
       } else if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException();

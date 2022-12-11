@@ -31,8 +31,8 @@ export class TalkingsController {
   }
 
   @Get()
-  async getTalkings(@Query() talkingPageQuery: TalkingPageQuery) {
-    const [talkings, count] = await this.talkingsService.getTalkings(talkingPageQuery);
+  async getTalkings(@CurrentUser() currentUser, @Query() talkingPageQuery: TalkingPageQuery) {
+    const [talkings, count] = await this.talkingsService.getTalkings(currentUser, talkingPageQuery);
     return new TalkingPageDto(
       count,
       talkingPageQuery.getLimit(),

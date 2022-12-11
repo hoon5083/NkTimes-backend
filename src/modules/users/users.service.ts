@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { User } from "src/common/entities/user.entity";
@@ -34,6 +33,12 @@ export class UsersService {
   async getUsers(currentUser, userPageQuery: UserPageQuery) {
     return await this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!user) {
+        throw new UnauthorizedException("Not Registered");
+      }
+      if (!user.isApproved) {
+        throw new ForbiddenException("Register is pending");
+      }
       if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("Only admin can access users list");
       }
@@ -82,10 +87,10 @@ export class UsersService {
         where: { email: currentUser.email },
       });
       if (!user) {
-        throw new NotFoundException("There is no user with that email");
+        throw new UnauthorizedException("Not Registered");
       }
       if (!user.isApproved) {
-        throw new BadRequestException("Register Pending");
+        throw new ForbiddenException("Register is pending");
       }
       return user;
     });
