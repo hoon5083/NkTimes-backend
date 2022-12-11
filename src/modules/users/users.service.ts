@@ -42,7 +42,10 @@ export class UsersService {
       if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("Only admin can access users list");
       }
-      const queryBuilder = manager.createQueryBuilder(User, "user"); //order by 추가 필요, 동시에 엔티티 수정 필요
+      const queryBuilder = manager
+        .createQueryBuilder(User, "user")
+        .limit(userPageQuery.getLimit())
+        .offset(userPageQuery.getOffset());
       if (valueToBoolean(userPageQuery.isPending)) {
         queryBuilder.where("user.is_approved = false");
       }
@@ -51,8 +54,6 @@ export class UsersService {
   }
 
   async createUser(currentUser, createUserDto: CreateUserDto) {
-    //닉네임 중복 체크
-    //번호 중복 체크, 전화번호 중복 체크
     return await this.dataSource.transaction(async (manager) => {
       const existingUser = await manager.findOne(User, {
         where: { email: currentUser.email },
