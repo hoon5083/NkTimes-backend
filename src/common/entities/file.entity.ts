@@ -28,7 +28,6 @@ export class File {
   createdAt: Date;
 
   @OneToOne(() => Popup, (popup) => popup.file)
-  @JoinColumn()
   popup: Popup;
 
   @ManyToOne(() => Article, (article) => article.files)
