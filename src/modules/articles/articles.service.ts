@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { Article } from "src/common/entities/article.entity";
 import { Board } from "src/common/entities/board.entity";
+import { File } from "src/common/entities/file.entity";
 import { Like } from "src/common/entities/like.entity";
 import { User } from "src/common/entities/user.entity";
 import { DataSource } from "typeorm";
@@ -31,11 +32,17 @@ export class ArticlesService {
       if (!board) {
         throw new BadRequestException("There is no board with the id");
       }
+      const files: File[] = [];
+      for (const key of createArticleDto.fileKeys) {
+        files.push(await manager.findOne(File, { where: { key: key } }));
+      }
+
       const article = await manager.create(Article, {
         title: createArticleDto.title,
         content: createArticleDto.content,
         board: board,
         author: user,
+        files: files,
       });
       await manager.save(article);
       return article;

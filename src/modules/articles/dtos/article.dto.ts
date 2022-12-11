@@ -27,6 +27,7 @@ export class ArticleDetailDto extends ArticleBriefDto {
     this.content = article.content;
     this.fileKeys = article.files ? article.files.map((file) => file.key) : [];
     this.isLiked = Boolean(article.userLikeCount);
+    console.log(article.files, "service");
   }
   isLiked: boolean;
   content: string;
