@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { Article } from "./article.entity";
 import { Popup } from "./popup.entity";
@@ -27,8 +28,10 @@ export class File {
   createdAt: Date;
 
   @OneToOne(() => Popup, (popup) => popup.file)
+  @JoinColumn()
   popup: Popup;
 
   @ManyToOne(() => Article, (article) => article.files)
+  @JoinColumn()
   article: Article;
 }
