@@ -1,0 +1,60 @@
+name: deploy
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        node-version: [16.18.1]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: Checkout source code.
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Check Npm -v
+        run: npm -v
+
+      - name: create env file
+        working-directory: ./
+        run: |
+          pwd
+          touch .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo APP_ENV=${{ secrets.APP_ENV }} >> .env
+          echo APP_PORT=${{ secrets.APP_PORT }} >> .env
+          echo APP_BASE_URL=${{ secrets.APP_BASE_URL }} >> .env
+          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+          echo MINIO_END_POINT=${{ secrets.MINIO_END_POINT }} >> .env
+          echo MINIO_PORT=${{ secrets.MINIO_PORT }} >> .env
+          echo MINIO_ACCESS_KEY=${{ secrets.MINIO_ACCESS_KEY }} >> .env
+          echo MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }} >> .env
+          echo MINIO_BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME }} >> .env
+          cat .env
+
+      - name: build server files
+        working-directory: ./
+        run: |
+          yarn
+          yarn run build
+          
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
