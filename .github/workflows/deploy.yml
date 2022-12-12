@@ -66,7 +66,7 @@ jobs:
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
-          --application-name hous-codedeploy
+          --application-name nktimes-codedeploy
           --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name GROUP
-          --s3-location bucket=hous-build,bundleType=zip,key=deploy/hous.zip
+          --deployment-group-name nktimes
+          --s3-location bucket=nktimes-build,bundleType=zip,key=deploy/nktimes.zip
