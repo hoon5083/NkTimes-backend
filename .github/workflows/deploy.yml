@@ -52,7 +52,7 @@ jobs:
           yarn
           yarn run build
       - name: zip file
-        run: zip -r hous.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
+        run: zip -r nktimes.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
 
       - name: AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -62,7 +62,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./nktimes-build.zip s3://nktimes-build/deploy/
+        run: aws s3 cp --region ap-northeast-2 ./nktimes.zip s3://nktimes-build/deploy/
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
