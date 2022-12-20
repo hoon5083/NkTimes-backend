@@ -5,4 +5,4 @@ cd $REPOSITORY
 
 sudo /usr/bin/npm
 
-sudo /usr/bin/pm2 start dist/main
+sudo /usr/bin/pm2 start dist
