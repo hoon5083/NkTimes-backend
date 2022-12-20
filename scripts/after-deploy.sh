@@ -5,4 +5,4 @@ cd $REPOSITORY
 
 sudo /usr/bin/npm install
 
-sudo /usr/bin/pm2 start dist
+sudo /usr/bin/pm2 start dist/main.js
