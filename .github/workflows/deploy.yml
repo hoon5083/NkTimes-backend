@@ -3,6 +3,8 @@ name: deploy
 on:
   push:
     branches: [develop]
+  pull_request:
+    branches: [develop]
 
 jobs:
   build:
@@ -47,8 +49,8 @@ jobs:
       - name: build server files
         working-directory: ./
         run: |
-          yarn
-          yarn run build
+          npm install
+          npm run build
       - name: zip file
         run: zip -r nktimes.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
 
@@ -60,11 +62,11 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./nktimes.zip s3://nktimes-build/deploy/
+        run: aws s3 cp --region ap-northeast-2 ./nktimes.zip s3://nktimes-build/deploy/nktimes.zip
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
-          --application-name nktimes-codedeploy
+          --application-name nktimes-deploy
           --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name nktimes
+          --deployment-group-name dev
           --s3-location bucket=nktimes-build,bundleType=zip,key=deploy/nktimes.zip
