@@ -51,7 +51,7 @@ export class ArticlesController {
   }
 
   @Get(":boardId/:id")
-  @UseGuards(GoogleAuthGuard({ strict: true }))
+  @UseGuards(GoogleAuthGuard({ strict: false }))
   async getArticle(
     @CurrentUser() currentUser,
     @Param("id", ParseIntPipe) id: number,

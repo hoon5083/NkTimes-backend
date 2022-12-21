@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { User } from "src/common/entities/user.entity";
 
 export class CreateBoardDto {
@@ -9,6 +9,11 @@ export class CreateBoardDto {
   @IsOptional()
   @IsNotEmpty()
   introduction: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @IsString({ each: true })
+  whitelist: string[];
 
   applicant: User;
 }

@@ -7,11 +7,13 @@ export class BoardDto {
     this.title = board.title;
     this.isApproved = board.isApproved;
     this.introduction = board.introduction;
+    this.whitelist = board.whitelist ? board.whitelist.split(" ") : [];
   }
   id: number;
   title: string;
   isApproved: boolean;
   introduction: string;
+  whitelist: string[];
 }
 
 export class BoardDetailDto extends BoardDto {
