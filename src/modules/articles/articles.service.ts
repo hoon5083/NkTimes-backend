@@ -36,9 +36,11 @@ export class ArticlesService {
       if (whitelist.indexOf(user.authority) === -1) {
         throw new ForbiddenException("not allowed");
       }
-      const files: File[] = [];
-      for (const key of createArticleDto.fileKeys) {
-        files.push(await manager.findOne(File, { where: { key: key } }));
+      const files: File[] = []; //파일 없으면 반복 안하도록 변경 필요함
+      if (createArticleDto.fileKeys) {
+        for (const key of createArticleDto.fileKeys) {
+          files.push(await manager.findOne(File, { where: { key: key } }));
+        }
       }
 
       const article = await manager.create(Article, {
