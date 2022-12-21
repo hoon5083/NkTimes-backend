@@ -47,8 +47,12 @@ export class BoardsService {
       if (titleDuplication) {
         throw new BadRequestException("title duplicated");
       }
-      createBoardDto.applicant = user;
-      const board = await manager.create<Board>(Board, createBoardDto);
+      const board = await manager.create<Board>(Board, {
+        title: createBoardDto.title,
+        introduction: createBoardDto.introduction,
+        applicant: user,
+        whitelist: createBoardDto.whitelist?.join(" "),
+      });
       await manager.save(board);
       return board;
     });
@@ -125,7 +129,10 @@ export class BoardsService {
       } else if (board.applicant.id !== user.id) {
         throw new ForbiddenException();
       }
-      await manager.update(Board, id, updateBoardDto);
+      await manager.update(Board, id, {
+        isApproved: updateBoardDto.isApproved,
+        whitelist: updateBoardDto.whitelist?.join(" "),
+      });
       return Object.assign(board, updateBoardDto);
     });
   }

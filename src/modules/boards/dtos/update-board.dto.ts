@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
 import { CreateBoardDto } from "./create-board.dto";
 
 export class UpdateBoardDto extends CreateBoardDto {
