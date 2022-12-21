@@ -9,7 +9,6 @@ import configuration from "./configuration";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === "production" ? ".env.production" : ".env.development",
       load: [configuration],
       cache: true,
     }),
