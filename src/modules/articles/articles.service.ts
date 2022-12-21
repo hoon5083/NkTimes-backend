@@ -72,24 +72,34 @@ export class ArticlesService {
 
   async getArticle(currentUser, id: number, boardId: number) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, { where: { email: currentUser.email } });
-      if (!user) {
-        throw new UnauthorizedException("Not Registered");
+      let user = await manager.findOne(User, { where: { email: currentUser.email } });
+      if (!currentUser.email) {
+        user = null;
       }
-      if (!user.isApproved) {
-        throw new ForbiddenException("Register is pending");
+      if (!(boardId === 1 || boardId === 2 || boardId === 4)) {
+        if (!currentUser.email) {
+          throw new UnauthorizedException("There is no JWT");
+        }
+        if (!user) {
+          throw new UnauthorizedException("Not Registered");
+        }
+        if (!user.isApproved) {
+          throw new ForbiddenException("Register is pending");
+        }
       }
-      const article = await manager
+      const qb = await manager
         .createQueryBuilder(Article, "article")
         .leftJoinAndSelect("article.author", "author")
         .leftJoinAndSelect("article.board", "board")
         .leftJoinAndSelect("article.files", "file")
-        .where("article.id = :id", { id: id })
-        .loadRelationCountAndMap("article.userLikeCount", "article.likes", "like", (qb) =>
+        .where("article.id = :id", { id: id });
+      if (currentUser.email) {
+        qb.loadRelationCountAndMap("article.userLikeCount", "article.likes", "like", (qb) =>
           qb.where("like.user_id = :id", { id: user.id })
-        )
+        );
+      }
+      const article = await qb
         .loadRelationCountAndMap("article.likeCount", "article.likes")
-
         .getOne();
       if (!article) {
         throw new NotFoundException("there is no article with the id");
