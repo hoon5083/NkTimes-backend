@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Check Npm -v
-        run: npm -v
+      - name: Check Yarn -v
+        run: yarn -v
 
       - name: create env file
         working-directory: ./
@@ -49,10 +49,10 @@ jobs:
       - name: build server files
         working-directory: ./
         run: |
-          npm install
-          npm run build
+          yarn
+          yarn build
       - name: zip file
-        run: zip -r nktimes.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
+        run: zip -r nktimes-backend.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
 
       - name: AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -62,11 +62,11 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./nktimes.zip s3://nktimes-build/deploy/nktimes.zip
+        run: aws s3 cp --region ap-northeast-2 ./nktimes.zip s3://nktimes-build/deploy/nktimes-backend.zip
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
           --application-name nktimes-deploy
           --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name dev
-          --s3-location bucket=nktimes-build,bundleType=zip,key=deploy/nktimes.zip
+          --deployment-group-name backend
+          --s3-location bucket=nktimes-build,bundleType=zip,key=deploy/nktimes-backend.zip
