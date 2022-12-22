@@ -62,7 +62,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./nktimes.zip s3://nktimes-build/deploy/nktimes-backend.zip
+        run: aws s3 cp --region ap-northeast-2 ./nktimes-backend.zip s3://nktimes-build/deploy/nktimes-backend.zip
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
