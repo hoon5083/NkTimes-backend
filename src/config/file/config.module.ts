@@ -6,7 +6,6 @@ import { MinioClientService } from "./minio/client.service";
 import { FileClientType } from "./enums/file-client-type.enum";
 import { FILE_CLIENT_SERVICE } from "src/common/constants";
 import { S3ClientService } from "./s3/client.service";
-import { MulterModule } from "@nestjs/platform-express";
 
 @Module({})
 export class FileConfigModule {
