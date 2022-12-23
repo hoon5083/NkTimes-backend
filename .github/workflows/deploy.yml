@@ -39,11 +39,10 @@ jobs:
           echo APP_PORT=${{ secrets.APP_PORT }} >> .env
           echo APP_BASE_URL=${{ secrets.APP_BASE_URL }} >> .env
           echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
-          echo MINIO_END_POINT=${{ secrets.MINIO_END_POINT }} >> .env
-          echo MINIO_PORT=${{ secrets.MINIO_PORT }} >> .env
-          echo MINIO_ACCESS_KEY=${{ secrets.MINIO_ACCESS_KEY }} >> .env
-          echo MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }} >> .env
-          echo MINIO_BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME }} >> .env
+          echo S3_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}} >> .env
+          echo S3_SECRET_KEY=${{secrets.S3_SECRET_KEY}} >> .env
+          echo S3_BUCKET_NAME=${{secrets.S3_BUCKET_NAME}} >> .env
+          echo S3_BUCKET_REGION=${{secrets.S3_BUCKET_REGION}} >> .env
           cat .env
 
       - name: build server files
