@@ -54,12 +54,18 @@ export class S3ClientService implements FileClientService {
         Key: key,
       }).createReadStream();
     } catch (err) {
-      console.log("no");
       throw new BadRequestException(err.message);
     }
   }
 
   async removeFile(key: string) {
-    return;
+    try {
+      return await this.S3.deleteObject({
+        Bucket: `${this.bucket}/files`,
+        Key: key,
+      }).createReadStream();
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
   }
 }
