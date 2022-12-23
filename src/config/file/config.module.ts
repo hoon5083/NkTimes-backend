@@ -52,16 +52,6 @@ export class FileConfigModule {
       case FileClientType.S3:
         return {
           module: FileConfigModule,
-          imports: [
-            MulterModule.registerAsync({
-              imports: [ConfigModule],
-
-              inject: [ConfigService],
-              useFactory: () => {
-                return {};
-              },
-            }),
-          ],
           providers: [
             {
               provide: FILE_CLIENT_SERVICE,

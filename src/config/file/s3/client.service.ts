@@ -48,7 +48,15 @@ export class S3ClientService implements FileClientService {
   }
 
   async getFile(key: string) {
-    return;
+    try {
+      return await this.S3.getObject({
+        Bucket: `${this.bucket}/files`,
+        Key: key,
+      }).createReadStream();
+    } catch (err) {
+      console.log("no");
+      throw new BadRequestException(err.message);
+    }
   }
 
   async removeFile(key: string) {
