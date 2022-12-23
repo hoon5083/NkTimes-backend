@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MinioClientService } from "./minio/client.service";
 import { FileClientType } from "./enums/file-client-type.enum";
 import { FILE_CLIENT_SERVICE } from "src/common/constants";
+import { S3ClientService } from "./s3/client.service";
+import { MulterModule } from "@nestjs/platform-express";
 
 @Module({})
 export class FileConfigModule {
@@ -43,6 +45,27 @@ export class FileConfigModule {
             {
               provide: FILE_CLIENT_SERVICE,
               useClass: MinioClientService,
+            },
+          ],
+          exports: [FILE_CLIENT_SERVICE],
+        };
+      case FileClientType.S3:
+        return {
+          module: FileConfigModule,
+          imports: [
+            MulterModule.registerAsync({
+              imports: [ConfigModule],
+
+              inject: [ConfigService],
+              useFactory: () => {
+                return {};
+              },
+            }),
+          ],
+          providers: [
+            {
+              provide: FILE_CLIENT_SERVICE,
+              useClass: S3ClientService,
             },
           ],
           exports: [FILE_CLIENT_SERVICE],
