@@ -1,4 +1,4 @@
 export enum FileClientType {
   LOCAL = "LOCAL",
-  MINIO = "MINIO",
+  S3 = "S3",
 }

@@ -5,7 +5,7 @@ import { FilesController } from "./files.controller";
 import { FilesService } from "./files.service";
 
 @Module({
-  imports: [FileConfigModule.register(FileClientType.LOCAL)],
+  imports: [FileConfigModule.register(FileClientType.S3)],
   controllers: [FilesController],
   providers: [FilesService],
 })
