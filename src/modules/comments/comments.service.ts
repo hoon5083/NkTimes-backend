@@ -45,9 +45,6 @@ export class CommentsService {
       if (!user) {
         throw new UnauthorizedException("Not Registered");
       }
-      if (!user.isApproved) {
-        throw new ForbiddenException("Register is pending");
-      }
       return await manager.findAndCount(Comment, {
         where: { article: { id: commentPageQuery.articleId } },
         relations: {

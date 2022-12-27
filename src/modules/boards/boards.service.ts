@@ -64,9 +64,6 @@ export class BoardsService {
       if (!user) {
         throw new UnauthorizedException("Not Registered");
       }
-      if (!user.isApproved) {
-        throw new ForbiddenException("Register is pending");
-      }
       if (
         (valueToBoolean(getBoardsQuery.viewAll) || valueToBoolean(getBoardsQuery.isPending)) ===
           true &&
@@ -94,9 +91,6 @@ export class BoardsService {
       const user = await manager.findOne(User, { where: { email: currentUser.email } });
       if (!user) {
         throw new UnauthorizedException("Not Registered");
-      }
-      if (!user.isApproved) {
-        throw new ForbiddenException("Register is pending");
       }
       const board = await manager.findOne(Board, { where: { id: id } });
       if (!board) {
