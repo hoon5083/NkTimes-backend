@@ -41,10 +41,6 @@ export class CommentsService {
 
   async getComments(currentUser, commentPageQuery: CommentPageQuery) {
     return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, { where: { email: currentUser.email } });
-      if (!user) {
-        throw new UnauthorizedException("Not Registered");
-      }
       return await manager.findAndCount(Comment, {
         where: { article: { id: commentPageQuery.articleId } },
         relations: {
