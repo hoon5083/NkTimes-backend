@@ -103,9 +103,6 @@ export class UsersService {
       if (!user) {
         throw new UnauthorizedException("Not Registered");
       }
-      if (!user.isApproved) {
-        throw new ForbiddenException("Register is pending");
-      }
       return user;
     });
   }
