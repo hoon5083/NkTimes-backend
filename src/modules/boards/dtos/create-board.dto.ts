@@ -10,7 +10,7 @@ export class CreateBoardDto {
   @IsNotEmpty()
   introduction: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   whitelist: string[];

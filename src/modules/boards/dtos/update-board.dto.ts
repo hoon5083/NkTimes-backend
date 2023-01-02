@@ -1,7 +1,14 @@
-import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
-import { CreateBoardDto } from "./create-board.dto";
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-export class UpdateBoardDto extends CreateBoardDto {
+export class UpdateBoardDto {
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  introduction: string;
+
   @IsOptional()
   @IsBoolean()
   isApproved: boolean;
