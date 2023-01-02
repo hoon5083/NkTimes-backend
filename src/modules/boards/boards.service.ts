@@ -113,7 +113,9 @@ export class BoardsService {
         relations: { applicant: true },
       });
       const titleDuplication = Boolean(
-        await manager.count(Board, { where: { title: updateBoardDto.title, id: Not(id) } })
+        await manager.findOne(Board, {
+          where: { title: updateBoardDto.title ? updateBoardDto.title : board.title, id: Not(id) },
+        })
       );
       if (titleDuplication) {
         throw new BadRequestException("title duplicated");

@@ -117,10 +117,14 @@ export class UsersService {
         throw new ForbiddenException("Register is pending");
       }
       const nicknameDuplication = Boolean(
-        await manager.findOne(User, { where: { nickname: updateUserDto.nickname } })
+        await manager.findOne(User, {
+          where: { nickname: updateUserDto.nickname ? updateUserDto.nickname : user.nickname },
+        })
       );
       const phoneDuplication = Boolean(
-        await manager.findOne(User, { where: { phone: updateUserDto.phone } })
+        await manager.findOne(User, {
+          where: { phone: updateUserDto.phone ? updateUserDto.phone : user.phone },
+        })
       );
       if (nicknameDuplication) {
         throw new BadRequestException("nickname duplicated");
