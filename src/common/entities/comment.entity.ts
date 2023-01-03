@@ -7,7 +7,7 @@ export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 1000 })
   content: string;
 
   @Column({ default: false })
