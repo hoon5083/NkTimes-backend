@@ -73,6 +73,9 @@ export class UsersService {
       ) {
         throw new BadRequestException("Student Info Needed(grade, class, studentId)");
       }
+      if (createUserDto.authority === UserEnum.GRADUATE && !createUserDto.graduateYear) {
+        throw new BadRequestException("Graduate year needed");
+      }
       if (createUserDto.authority === UserEnum.ADMIN) {
         throw new BadRequestException("Cannot create Admin");
       }
