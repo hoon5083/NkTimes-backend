@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { User } from "src/common/entities/user.entity";
 import { UserEnum } from "src/common/enums/user.enum";
-import { DataSource } from "typeorm";
+import { DataSource, Not } from "typeorm";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { UpdateUserDetailDto, UpdateUserDto } from "./dtos/update-user.dto";
 import { UserPageQuery } from "./dtos/user-page-query.dto";
@@ -121,12 +121,18 @@ export class UsersService {
       }
       const nicknameDuplication = Boolean(
         await manager.findOne(User, {
-          where: { nickname: updateUserDto.nickname ? updateUserDto.nickname : user.nickname },
+          where: {
+            nickname: updateUserDto.nickname ? updateUserDto.nickname : user.nickname,
+            id: Not(user.id),
+          },
         })
       );
       const phoneDuplication = Boolean(
         await manager.findOne(User, {
-          where: { phone: updateUserDto.phone ? updateUserDto.phone : user.phone },
+          where: {
+            phone: updateUserDto.phone ? updateUserDto.phone : user.phone,
+            id: Not(user.id),
+          },
         })
       );
       if (nicknameDuplication) {
@@ -187,11 +193,35 @@ export class UsersService {
       if (user.authority !== UserEnum.ADMIN) {
         throw new ForbiddenException("Only Admin users can update users");
       }
+      const selectedUser = await manager.findOne(User, { where: { id } });
+      console.log(selectedUser);
+      console.log(
+        await manager.findOne(User, {
+          where: {
+            nickname: updateUserDetailDto.nickname
+              ? updateUserDetailDto.nickname
+              : selectedUser.nickname,
+            id: Not(id),
+          },
+        })
+      );
       const nicknameDuplication = Boolean(
-        await manager.findOne(User, { where: { nickname: updateUserDetailDto.nickname } })
+        await manager.findOne(User, {
+          where: {
+            nickname: updateUserDetailDto.nickname
+              ? updateUserDetailDto.nickname
+              : selectedUser.nickname,
+            id: Not(id),
+          },
+        })
       );
       const phoneDuplication = Boolean(
-        await manager.findOne(User, { where: { phone: updateUserDetailDto.phone } })
+        await manager.findOne(User, {
+          where: {
+            phone: updateUserDetailDto.phone ? updateUserDetailDto.phone : selectedUser.phone,
+            id: Not(id),
+          },
+        })
       );
       if (nicknameDuplication) {
         throw new BadRequestException("nickname duplicated");
