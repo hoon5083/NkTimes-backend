@@ -7,13 +7,13 @@ export class Board {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 50 })
   title: string;
 
   @Column({ default: false })
   isApproved: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 100 })
   introduction: string;
 
   @Column({ default: "관리자 교사 졸업생 재학생 학생회 방송반 신문반" })

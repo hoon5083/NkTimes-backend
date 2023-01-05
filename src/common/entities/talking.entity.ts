@@ -13,7 +13,7 @@ export class Talking {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 1000 })
   content: string;
 
   @CreateDateColumn()
