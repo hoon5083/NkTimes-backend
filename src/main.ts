@@ -9,7 +9,7 @@ async function bootstrap() {
   const appConfig = app.get(ConfigService);
   app.use(helmet({ contentSecurityPolicy: false }));
   app.enableCors({
-    origin: "*",
+    origin: ["https://nktone.com", "https://www.nktone.com"],
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE"],
   });
