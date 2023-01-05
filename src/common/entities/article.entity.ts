@@ -19,10 +19,10 @@ export class Article {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 50 })
   title: string;
 
-  @Column()
+  @Column({ length: 15000 })
   content: string;
 
   @CreateDateColumn()

@@ -33,5 +33,10 @@ export class CreateUserDto {
   @IsString()
   name: string;
 
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  graduateYear: number;
+
   email: string;
 }
