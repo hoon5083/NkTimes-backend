@@ -7,7 +7,7 @@ import helmet from "helmet";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const appConfig = app.get(ConfigService);
-  app.use(helmet({ contentSecurityPolicy: false }));
+  app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));
   app.enableCors({
     origin: ["https://nktone.com", "https://www.nktone.com"],
     credentials: true,
