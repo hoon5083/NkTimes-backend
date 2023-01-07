@@ -194,17 +194,7 @@ export class UsersService {
         throw new ForbiddenException("Only Admin users can update users");
       }
       const selectedUser = await manager.findOne(User, { where: { id } });
-      console.log(selectedUser);
-      console.log(
-        await manager.findOne(User, {
-          where: {
-            nickname: updateUserDetailDto.nickname
-              ? updateUserDetailDto.nickname
-              : selectedUser.nickname,
-            id: Not(id),
-          },
-        })
-      );
+
       const nicknameDuplication = Boolean(
         await manager.findOne(User, {
           where: {
