@@ -14,11 +14,11 @@ import { FilesService } from "./files.service";
 import { ParseFilePipe } from "./pipes/parse-file.pipe";
 
 @Controller("files")
-@UseGuards(GoogleAuthGuard({ strict: true }))
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post()
+  @UseGuards(GoogleAuthGuard({ strict: true }))
   @UseInterceptors(FileInterceptor("file"))
   async uploadFile(@UploadedFile(ParseFilePipe) uploadedFile: Express.Multer.File) {
     return this.filesService.uploadFile(uploadedFile);
